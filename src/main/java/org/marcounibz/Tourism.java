@@ -15,9 +15,9 @@ public class Tourism {
 
     public JSONObject getData() throws IOException, ParseException {
         URL url = new URL("https://tourism.opendatahub.com/v1/WeatherHistory?pagenumber=1&removenullvalues=false");
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        con.setRequestMethod("GET");
-        InputStream inputStream = con.getInputStream();
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        InputStream inputStream = connection.getInputStream();
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject = (JSONObject) jsonParser.parse(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
@@ -35,7 +35,7 @@ public class Tourism {
         }
         System.out.println(itemList);*/
 
-        con.disconnect();
+        connection.disconnect();
 
         return jsonObject;
     }

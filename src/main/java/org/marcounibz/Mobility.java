@@ -15,9 +15,9 @@ public class Mobility {
 
     public JSONObject getData() throws IOException, ParseException {
         URL url = new URL("https://mobility.api.opendatahub.com/v2/flat%2Cnode/%2A?limit=200&offset=0&shownull=false&distinct=true");
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        con.setRequestMethod("GET");
-        InputStream inputStream = con.getInputStream();
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        InputStream inputStream = connection.getInputStream();
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject = (JSONObject) jsonParser.parse(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
@@ -33,7 +33,7 @@ public class Mobility {
         }
         System.out.println(itemList);*/
 
-        con.disconnect();
+        connection.disconnect();
 
         return jsonObject;
     }
