@@ -16,7 +16,7 @@ public class Main {
         JSONObject mobilityData;
 
         tourismData = tourism.getData();
-        mobilityData = mobility.getData();
+        mobilityData = mobility.getDataFromApi();
 
         System.out.println(tourismData);
         System.out.println("\n \n \n -----SEPARATE----- \n \n \n");

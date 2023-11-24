@@ -15,3 +15,30 @@ api_2:
 Steps: 
 - creare 2 classi: la prima per api1 e l'altra per api2
 - .
+
+##Example of configuration file
+
+```JSON
+{
+"apiClients": [
+  {
+    "name": "mobility",
+    "type": "OpenDataHubApiDatabase1",
+    "url": "https://api-database1.com",
+    "mapping": {
+      "key": "dataKey",
+      "path": "item>location"
+    }
+  },
+  {
+    "name": "tourism",
+    "type": "OpenDataHubApiDatabase2",
+    "url": "https://api-database2.com",
+    "mapping": {
+      "key": "dataKey",
+      "path": "item2>location2"
+    }
+  }
+]
+}
+```
