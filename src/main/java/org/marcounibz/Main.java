@@ -2,6 +2,7 @@ package org.marcounibz;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
+import org.marcounibz.configurationHelper.ConfiguratorReader;
 
 import java.io.IOException;
 
@@ -9,7 +10,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException, ParseException, InterruptedException {
 
-        Tourism tourism = new Tourism();
+        /*Tourism tourism = new Tourism();
         Mobility mobility = new Mobility();
 
         JSONObject tourismData;
@@ -20,6 +21,9 @@ public class Main {
 
         System.out.println(tourismData);
         System.out.println("\n \n \n -----SEPARATE----- \n \n \n");
-        System.out.println(mobilityData);
+        System.out.println(mobilityData);*/
+
+        ConfiguratorReader configuratorReader = new ConfiguratorReader();
+        configuratorReader.readDataFromConfigurationFile();
     }
 }

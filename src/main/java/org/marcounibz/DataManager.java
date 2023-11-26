@@ -2,7 +2,7 @@ package org.marcounibz;
 
 
 import org.marcounibz.configurationHelper.ConfiguratorReader;
-import org.marcounibz.configurationHelper.OpenDataHubApiConfig;
+import org.marcounibz.mapping.OpenDataHubApiConfig;
 
 import java.util.List;
 import java.util.Map;

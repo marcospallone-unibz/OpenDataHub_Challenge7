@@ -1,15 +1,18 @@
-package org.marcounibz.configurationHelper;
+package org.marcounibz.mapping;
 
+import org.json.simple.JSONArray;
+
+import java.util.List;
 import java.util.Map;
 
 public class OpenDataHubApiConfig {
-    private String name;
-    private String url;
+    public String name;
+    public String type;
 
-    private String key;
-    private Map<String, String> mapping;
+    public String url;
+    public List<Mapping> mapping;
 
-    public String getName() {
+    /*public String getName() {
         return name;
     }
 
@@ -31,7 +34,7 @@ public class OpenDataHubApiConfig {
 
     public void setMapping(Map<String, String> mapping) {
         this.mapping = mapping;
-    }
+    }*/
 
 
 }

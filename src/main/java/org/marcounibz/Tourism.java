@@ -3,7 +3,7 @@ package org.marcounibz;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.marcounibz.configurationHelper.OpenDataHubApiConfig;
+import org.marcounibz.mapping.OpenDataHubApiConfig;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,10 +14,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
-public class Tourism  extends OpenDataHubApiClient{
+public class Tourism  implements OpenDataHubApiClient{
     @Override
     public List<Map<String, Object>> fetchDataFromApi(OpenDataHubApiConfig config) throws Exception {
-        return super.fetchDataFromApi(config);
+        return null;
     }
     public JSONObject getData() throws IOException, ParseException {
         URL url = new URL("https://tourism.opendatahub.com/v1/WeatherHistory?pagenumber=1&removenullvalues=false");

@@ -1,48 +1,35 @@
 package org.marcounibz.configurationHelper;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.marcounibz.OpenDataHubApiClient;
+import org.marcounibz.mapping.OpenDataHubApiConfig;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Map;
 
 //reads data in configuration.json
 public class ConfiguratorReader {
     JSONParser parser = new JSONParser();
-
+    Gson gson= new Gson();
     OpenDataHubApiConfig mobilityConfig; //i think they sould be called in a more generic way
     OpenDataHubApiConfig tourismConfig;
 
 
     public void readDataFromConfigurationFile() throws IOException, ParseException {
-        //read data from configFile and save it in an obj of type OpenDataHubApiConfig and set mobility and tourismConfig
-        JSONArray jsonArray = (JSONArray) parser.parse(new FileReader("c:\\exer4-courses.json"));
+        JSONObject jsonObject = (JSONObject) parser.parse(new FileReader("src/main/resources/config.json"));
+        JSONArray apiClients = (JSONArray) jsonObject.get("apiClients");
 
-        for (Object o : jsonArray)
-        {
-            JSONObject person = (JSONObject) o;
+        JSONObject api1 = (JSONObject) apiClients.get(0);
+        JSONObject api2 = (JSONObject) apiClients.get(1);
 
-            String name = (String) person.get("name");
+        mobilityConfig = gson.fromJson(api1.toString(),OpenDataHubApiConfig.class);
+        tourismConfig = gson.fromJson(api2.toString(),OpenDataHubApiConfig.class);
 
-            String city = (String) person.get("city");
-            System.out.println(city);
-
-            String job = (String) person.get("job");
-            System.out.println(job);
-
-            JSONArray cars = (JSONArray) person.get("cars");
-
-            for (Object c : cars)
-            {
-                System.out.println(c+"");
-            }
-        }
     }
 
     public OpenDataHubApiConfig getMobilityConfig(){
