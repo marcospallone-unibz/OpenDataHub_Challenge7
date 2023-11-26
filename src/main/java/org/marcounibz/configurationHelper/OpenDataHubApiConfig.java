@@ -5,6 +5,8 @@ import java.util.Map;
 public class OpenDataHubApiConfig {
     private String name;
     private String url;
+
+    private String key;
     private Map<String, String> mapping;
 
     public String getName() {
