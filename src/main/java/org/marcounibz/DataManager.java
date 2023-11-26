@@ -26,12 +26,12 @@ public class DataManager {
         this.tourismConfig = configuratorReader.getTourismConfigConfig();
     }
     //get data from api and merge
-    public List<Map<String, Object>> mergeData() throws Exception {
+    /*public List<Map<String, Object>> mergeData() throws Exception {
         List<Map<String, Object>> returnValue = null;
         List<Map<String, Object>> data1 = mobility.fetchDataFromApi(mobilityConfig);
         List<Map<String, Object>> data2 = tourism.fetchDataFromApi(tourismConfig);
         //merge somehow data
 
         return returnValue;
-    }
+    }*/
 }

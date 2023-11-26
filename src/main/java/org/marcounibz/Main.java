@@ -1,6 +1,5 @@
 package org.marcounibz;
 
-import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.marcounibz.configurationHelper.ConfiguratorReader;
 
@@ -8,22 +7,15 @@ import java.io.IOException;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException, ParseException, InterruptedException {
+    static ConfiguratorReader configuratorReader = new ConfiguratorReader();
+    Mobility mobility = new Mobility(configuratorReader.getMobilityConfig());
 
-        /*Tourism tourism = new Tourism();
-        Mobility mobility = new Mobility();
+    public static void main(String[] args) throws Exception {
 
-        JSONObject tourismData;
-        JSONObject mobilityData;
-
-        tourismData = tourism.getData();
-        mobilityData = mobility.getDataFromApi();
-
-        System.out.println(tourismData);
-        System.out.println("\n \n \n -----SEPARATE----- \n \n \n");
-        System.out.println(mobilityData);*/
-
-        ConfiguratorReader configuratorReader = new ConfiguratorReader();
         configuratorReader.readDataFromConfigurationFile();
+        Tourism tourism = new Tourism(configuratorReader.getTourismConfigConfig());
+        tourism.fetchDataFromApi();
+        tourism.splitPath();
+
     }
 }

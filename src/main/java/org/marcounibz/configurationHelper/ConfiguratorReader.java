@@ -10,7 +10,6 @@ import org.marcounibz.mapping.OpenDataHubApiConfig;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Map;
 
 //reads data in configuration.json
 public class ConfiguratorReader {
