@@ -4,7 +4,7 @@
 
 ### Endpoint
 
-*URL*: Mobility API
+*URL*: [Mobility API](https://mobility.api.opendatahub.com/v2/flat%2Cnode/%2A?limit=1&offset=0&shownull=false&distinct=true)
 
 ### Data Structure
 
@@ -64,7 +64,7 @@
 
 ### Endpoint
 
-*URL*: Tourism API
+*URL*: [TourismApi](https://tourism.opendatahub.com/v1/ODHActivityPoi?pagenumber=1&pagesize=1&type=255&removenullvalues=false)
 
 ### Data Structure
 
