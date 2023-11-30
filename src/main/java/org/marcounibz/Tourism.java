@@ -13,6 +13,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,26 +43,84 @@ public class Tourism implements OpenDataHubApiClient {
 
     @Override
     public JSONObject splitPath() {
-        JSONObject testJSON;
         String[] steps = this.config.pathToItem.split(">");
         for(String s:steps){
             this.splittedArray = (JSONArray) objectFromAPI.get(s);
         }
-        for(Mapping mapping:this.config.mapping){
-            this.keyPaths.add(mapping.getKeyPath().split(">"));
+        List<Mapping> mappings = this.config.mapping;
+        List<String> keyPaths = new ArrayList<>();
+        for(int i = 0; i<mappings.size(); i++) {
+            keyPaths.add(mappings.get(i).getKeyPath());
         }
-        /*for(int i=0; i<this.splittedArray.size(); i++){
-            JSONObject myObj = (JSONObject) this.splittedArray.get(i);
-            for(String[] array:this.keyPaths){
-                JSONArray test2 = (JSONArray) myObj.get(array[0]);
-                for(int j =1; j<array.length; j++){
-                    test2 = (JSONObject) test2.get(array[j]);
-                    if(j== array.length-1){
-                        this.keys.add(test2);
-                    }
+        Map<List<Object>, JSONObject> mappedData = mapData(objectFromAPI, keyPaths);
+
+        return null;
+    }
+
+/*/*
+
+    private static JSONArray getNestedArray(JSONObject jsonObject, String... keys) {
+        for (String key : keys) {
+            jsonObject = (JSONObject) jsonObject.get(key);
+        }
+        return (JSONArray) jsonObject.get(keys[keys.length - 1]);
+    }*/
+
+    private static Map<List<Object>, JSONObject> mapData(JSONObject jsonData, List<String> keyPaths) {
+        Map<List<Object>, JSONObject> mappedData = new HashMap<>();
+        //GENERALIZZARE ITEMS!
+        JSONArray dataArray = (JSONArray) jsonData.get("Items");
+
+        for (int i = 0; i < dataArray.size(); i++) {
+            JSONObject item = (JSONObject) dataArray.get(i);
+            List<Object> key = new ArrayList<>();
+
+            for (String keyPath : keyPaths) {
+                Object keyValue = getValueByPath(item, keyPath);
+                key.add(keyValue);
+            }
+
+            mappedData.put(key, item);
+        }
+
+        return mappedData;
+    }
+
+    // Funzione per ottenere il valore di una chiave specifica utilizzando un percorso
+    private static Object getValueByPath(JSONObject jsonObject, String path) {
+        String[] keys = path.split(">");
+        JSONObject currentObject = jsonObject;
+        String lastKey = keys[keys.length-1];
+        for (int i = 0; i< keys.length; i++) {
+            if (currentObject.containsKey(keys[i])) {
+                Object value = currentObject.get(keys[i]);
+                if (value instanceof JSONObject) {
+                    currentObject = (JSONObject) value;
+                }else if(value instanceof JSONArray && keys[i+1]==lastKey){
+                    Object jsonArrayReturnValue = handleJsonArrayValue((JSONArray) value, lastKey);
+                    return jsonArrayReturnValue;
+                } else {
+                    return value;
+                }
+            } else {
+                return null;
+            }
+        }
+
+        return null;
+    }
+
+    private static Object handleJsonArrayValue(JSONArray jsonArray, String lastKey) {
+        for (Object obj : jsonArray) {
+            if (obj instanceof JSONObject) {
+                JSONObject jsonObj = (JSONObject) obj;
+
+                if (jsonObj.containsKey(lastKey)) {
+                    Object foundValue = jsonObj.get(lastKey);
+                    return foundValue;
                 }
             }
-        }*/
-        return null;
+        }
+    return null;
     }
 }
