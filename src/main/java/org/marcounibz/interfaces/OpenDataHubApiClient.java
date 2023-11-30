@@ -7,5 +7,5 @@ import java.util.Map;
 
 public interface OpenDataHubApiClient {
     void fetchDataFromApi() throws Exception;
-    JSONObject splitPath();
+    Map<List<Object>, JSONObject> splitPath();
 }

@@ -25,8 +25,9 @@ public class Tourism implements OpenDataHubApiClient {
     List<Object> keys = new ArrayList<>();
     Map<Object, JSONObject> objectMap;
 
-    public Tourism(OpenDataHubApiConfig config){
+    public Tourism(OpenDataHubApiConfig config) throws Exception {
         this.config = config;
+        fetchDataFromApi();
     }
 
     @Override
@@ -42,7 +43,7 @@ public class Tourism implements OpenDataHubApiClient {
     }
 
     @Override
-    public JSONObject splitPath() {
+    public Map<List<Object>, JSONObject> splitPath() {
         String[] steps = this.config.pathToItem.split(">");
         for(String s:steps){
             this.splittedArray = (JSONArray) objectFromAPI.get(s);
@@ -52,27 +53,21 @@ public class Tourism implements OpenDataHubApiClient {
         for(int i = 0; i<mappings.size(); i++) {
             keyPaths.add(mappings.get(i).getKeyPath());
         }
-        Map<List<Object>, JSONObject> mappedData = mapData(objectFromAPI, keyPaths);
+        return mapData(objectFromAPI, keyPaths);
 
-        return null;
+
     }
 
-/*/*
-
-    private static JSONArray getNestedArray(JSONObject jsonObject, String... keys) {
-        for (String key : keys) {
-            jsonObject = (JSONObject) jsonObject.get(key);
-        }
-        return (JSONArray) jsonObject.get(keys[keys.length - 1]);
-    }*/
-
-    private static Map<List<Object>, JSONObject> mapData(JSONObject jsonData, List<String> keyPaths) {
+    private  Map<List<Object>, JSONObject> mapData(JSONObject jsonData, List<String> keyPaths) {
         Map<List<Object>, JSONObject> mappedData = new HashMap<>();
-        //GENERALIZZARE ITEMS!
-        JSONArray dataArray = (JSONArray) jsonData.get("Items");
-
-        for (int i = 0; i < dataArray.size(); i++) {
-            JSONObject item = (JSONObject) dataArray.get(i);
+        String[] pathStepToItem = this.config.pathToItem.split(">");
+        Object items = objectFromAPI;
+        for(String nextStep: pathStepToItem){
+            items = goIntoJSON(items,nextStep);
+        }
+        JSONArray itemArray = (JSONArray) items;
+        for (int i = 0; i < itemArray.size(); i++) {
+            JSONObject item = (JSONObject) itemArray.get(i);
             List<Object> key = new ArrayList<>();
 
             for (String keyPath : keyPaths) {
@@ -86,7 +81,6 @@ public class Tourism implements OpenDataHubApiClient {
         return mappedData;
     }
 
-    // Funzione per ottenere il valore di una chiave specifica utilizzando un percorso
     private static Object getValueByPath(JSONObject jsonObject, String path) {
         String[] keys = path.split(">");
         JSONObject currentObject = jsonObject;
@@ -123,4 +117,26 @@ public class Tourism implements OpenDataHubApiClient {
         }
     return null;
     }
+
+    public Object goIntoJSON( Object obj, String nextStep){
+        Object returnValue = null;
+        if(obj instanceof JSONArray ){
+            JSONArray jsonArray = (JSONArray) obj;
+            for (Object objInJsonArray : jsonArray) {
+                if (objInJsonArray instanceof JSONObject) {
+                    JSONObject jsonObj = (JSONObject) objInJsonArray;
+                    if (jsonObj.containsKey(nextStep)) {
+                        Object foundValue = jsonObj.get(nextStep);
+                        return foundValue;
+                    }
+                }
+            }
+        }else if(obj instanceof  JSONObject){
+            JSONObject JSONObject = (JSONObject) obj;
+            returnValue = JSONObject.get(nextStep);
+        }
+        return returnValue;
+    }
 }
+
+

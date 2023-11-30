@@ -17,7 +17,7 @@
     {
       "name": "tourism",
       "type": "OpenDataHubApiDatabase2",
-      "url": "https://tourism.opendatahub.com/v1/ODHActivityPoi?pagenumber=1&pagesize=1&type=255&removenullvalues=false",
+      "url": "https://tourism.opendatahub.com/v1/ODHActivityPoi",
       "pathToItem":"Items",
       "mapping": [
         {
