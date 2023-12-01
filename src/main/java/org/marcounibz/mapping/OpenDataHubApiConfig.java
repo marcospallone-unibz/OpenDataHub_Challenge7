@@ -9,4 +9,5 @@ public class OpenDataHubApiConfig {
     public String url;
     public String pathToItem;
     public List<Mapping> mapping;
+    public List<DuplicatedKeys> duplicatedKeys;
 }

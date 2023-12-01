@@ -7,13 +7,18 @@
       "pathToItem":"data",
       "mapping": [
         {
-          "keyPath": "pcoordinate>x"
+          "keyPath": "pcoordinate>y"
         },
         {
-          "keyPath": "pcoordinate>y"
+          "keyPath": "pcoordinate>x"
         }
       ]
+      "duplicatedKeys":[
+      {"pathFromItem": "scode"},
+      {"pathFromItem": "ptype"}
+      ]
     },
+
     {
       "name": "tourism",
       "type": "OpenDataHubApiDatabase2",
