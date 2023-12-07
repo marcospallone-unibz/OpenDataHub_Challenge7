@@ -11,11 +11,10 @@ import org.marcounibz.mapping.OpenDataHubApiConfig;
 import java.io.FileReader;
 import java.io.IOException;
 
-//reads data in configuration.json
 public class ConfiguratorReader {
     JSONParser parser = new JSONParser();
-    Gson gson= new Gson();
-    OpenDataHubApiConfig mobilityConfig; //i think they sould be called in a more generic way
+    Gson gson = new Gson();
+    OpenDataHubApiConfig mobilityConfig;
     OpenDataHubApiConfig tourismConfig;
 
 
@@ -26,16 +25,17 @@ public class ConfiguratorReader {
         JSONObject api1 = (JSONObject) apiClients.get(0);
         JSONObject api2 = (JSONObject) apiClients.get(1);
 
-        mobilityConfig = gson.fromJson(api1.toString(),OpenDataHubApiConfig.class);
-        tourismConfig = gson.fromJson(api2.toString(),OpenDataHubApiConfig.class);
+        mobilityConfig = gson.fromJson(api1.toString(), OpenDataHubApiConfig.class);
+        tourismConfig = gson.fromJson(api2.toString(), OpenDataHubApiConfig.class);
 
     }
 
-    public OpenDataHubApiConfig getMobilityConfig(){
+    public OpenDataHubApiConfig getMobilityConfig() {
         OpenDataHubApiConfig copyOfMobilityConfig = this.mobilityConfig;
         return copyOfMobilityConfig;
     }
-    public OpenDataHubApiConfig getTourismConfigConfig(){
+
+    public OpenDataHubApiConfig getTourismConfigConfig() {
         OpenDataHubApiConfig copyOfTourismConfig = this.tourismConfig;
         return copyOfTourismConfig;
     }
