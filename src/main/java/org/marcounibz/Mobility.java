@@ -55,7 +55,7 @@ public class Mobility implements OpenDataHubApiClient {
     private Map<List<Object>, JSONObject> mapData(JSONObject jsonData, List<String> keyPaths) {
         Map<List<Object>, JSONObject> mappedData = new HashMap<>();
         String[] pathStepToItem = this.config.pathToItem.split(">");
-        Object items = objectFromAPI;
+        Object items = this.objectFromAPI;
         for (String nextStep : pathStepToItem) {
             items = goIntoJSON(items, nextStep);
         }
@@ -69,7 +69,6 @@ public class Mobility implements OpenDataHubApiClient {
             }
             mappedData.put(key, item);
         }
-
         return mappedData;
     }
 
@@ -91,7 +90,6 @@ public class Mobility implements OpenDataHubApiClient {
                 return null;
             }
         }
-
         return null;
     }
 

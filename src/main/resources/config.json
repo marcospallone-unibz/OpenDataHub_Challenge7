@@ -3,7 +3,7 @@
     {
       "name": "mobility",
       "type": "OpenDataHubApiDatabase1",
-      "url": "https://mobility.api.opendatahub.com/v2/flat%2Cnode/%2A?limit=200&offset=0&shownull=false&distinct=true",
+      "url": "https://mobility.api.opendatahub.com/v2/flat%2Cnode/%2A/%2A?limit=200&offset=0&shownull=false&distinct=true",
       "pathToItem":"data",
       "mapping": [
         {
@@ -22,7 +22,7 @@
     {
       "name": "tourism",
       "type": "OpenDataHubApiDatabase2",
-      "url": "https://tourism.opendatahub.com/v1/ODHActivityPoi",
+      "url": "https://tourism.opendatahub.com/v1/Accommodation?pagenumber=1&roominfo=1-18%2C18&bokfilter=hgv&msssource=sinfo&availabilitychecklanguage=en&detail=0&removenullvalues=false",
       "pathToItem":"Items",
       "mapping": [
         {
