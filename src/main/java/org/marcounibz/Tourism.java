@@ -63,15 +63,12 @@ public class Tourism implements OpenDataHubApiClient {
         for (Object o : itemArray) {
             JSONObject item = (JSONObject) o;
             List<Object> key = new ArrayList<>();
-
             for (String keyPath : keyPaths) {
                 Object keyValue = getValueByPath(item, keyPath);
                 key.add(keyValue);
             }
-
             mappedData.put(key, item);
         }
-
         return mappedData;
     }
 
@@ -93,14 +90,12 @@ public class Tourism implements OpenDataHubApiClient {
                 return null;
             }
         }
-
         return null;
     }
 
     private static Object handleJsonArrayValue(JSONArray jsonArray, String lastKey) {
         for (Object obj : jsonArray) {
             if (obj instanceof JSONObject jsonObj) {
-
                 if (jsonObj.containsKey(lastKey)) {
                     return jsonObj.get(lastKey);
                 }

@@ -19,9 +19,6 @@ public class Mobility implements OpenDataHubApiClient {
     OpenDataHubApiConfig config;
     JSONObject objectFromAPI;
     JSONArray splittedArray;
-    List<String[]> keyPaths = new ArrayList<>();
-    List<Object> keys = new ArrayList<>();
-    Map<List<Object>, JSONObject> mappedData;
 
     public Mobility(OpenDataHubApiConfig config) throws Exception {
         this.config = config;
@@ -70,10 +67,8 @@ public class Mobility implements OpenDataHubApiClient {
                 Object keyValue = getValueByPath(item, keyPath);
                 key.add(keyValue);
             }
-
             mappedData.put(key, item);
         }
-
         return mappedData;
     }
 
@@ -95,18 +90,15 @@ public class Mobility implements OpenDataHubApiClient {
                 return null;
             }
         }
-
         return null;
     }
 
     private static Object handleJsonArrayValue(JSONArray jsonArray, String lastKey) {
         for (Object obj : jsonArray) {
-            if (obj instanceof JSONObject) {
-                JSONObject jsonObj = (JSONObject) obj;
+            if (obj instanceof JSONObject jsonObj) {
 
                 if (jsonObj.containsKey(lastKey)) {
-                    Object foundValue = jsonObj.get(lastKey);
-                    return foundValue;
+                    return jsonObj.get(lastKey);
                 }
             }
         }
@@ -115,19 +107,15 @@ public class Mobility implements OpenDataHubApiClient {
 
     public Object goIntoJSON( Object obj, String nextStep){
         Object returnValue = null;
-        if(obj instanceof JSONArray ){
-            JSONArray jsonArray = (JSONArray) obj;
+        if(obj instanceof JSONArray jsonArray){
             for (Object objInJsonArray : jsonArray) {
-                if (objInJsonArray instanceof JSONObject) {
-                    JSONObject jsonObj = (JSONObject) objInJsonArray;
+                if (objInJsonArray instanceof JSONObject jsonObj) {
                     if (jsonObj.containsKey(nextStep)) {
-                        Object foundValue = jsonObj.get(nextStep);
-                        return foundValue;
+                        return jsonObj.get(nextStep);
                     }
                 }
             }
-        }else if(obj instanceof  JSONObject){
-            JSONObject JSONObject = (JSONObject) obj;
+        }else if(obj instanceof JSONObject JSONObject){
             returnValue = JSONObject.get(nextStep);
         }
         return returnValue;
