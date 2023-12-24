@@ -83,42 +83,17 @@ public class Mobility implements OpenDataHubApiClient {
 
     private static Object getValueByPath(JSONObject jsonObject, String path) {
         String[] keys = path.split(">");
-        JSONObject currentObject = jsonObject;
+        Object currentObject = jsonObject;
         String lastKey = keys[keys.length-1];
         for (int i = 0; i< keys.length; i++) {
-            if (currentObject.containsKey(keys[i])) {
-                Object value = currentObject.get(keys[i]);
-                if (value instanceof JSONObject) {
-                    currentObject = (JSONObject) value;
-                }else if(value instanceof JSONArray && keys[i+1]==lastKey){
-                    Object jsonArrayReturnValue = handleJsonArrayValue((JSONArray) value, lastKey);
-                    return jsonArrayReturnValue;
-                } else {
-                    return value;
-                }
-            } else {
-                return null;
-            }
+                currentObject = goIntoJSON(currentObject, keys[i]);
+                if(keys[i]==lastKey) return currentObject;
         }
 
         return null;
     }
 
-    private static Object handleJsonArrayValue(JSONArray jsonArray, String lastKey) {
-        for (Object obj : jsonArray) {
-            if (obj instanceof JSONObject) {
-                JSONObject jsonObj = (JSONObject) obj;
-
-                if (jsonObj.containsKey(lastKey)) {
-                    Object foundValue = jsonObj.get(lastKey);
-                    return foundValue;
-                }
-            }
-        }
-        return null;
-    }
-
-    public Object goIntoJSON( Object obj, String nextStep){
+    public static Object goIntoJSON(Object obj, String nextStep){
         Object returnValue = null;
         if(obj instanceof JSONArray ){
             JSONArray jsonArray = (JSONArray) obj;
