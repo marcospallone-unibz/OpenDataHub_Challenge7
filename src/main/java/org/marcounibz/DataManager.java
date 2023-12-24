@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//this class will handle the datas and return
 public class DataManager {
     Mobility mobility;
     Tourism tourism;
@@ -19,6 +18,7 @@ public class DataManager {
     OpenDataHubApiConfig tourismConfig;
     Map<List<Object>, JSONObject> mappedDataMobility;
     Map<List<Object>, JSONObject> mappedDataTourism;
+
     public DataManager() throws Exception {
         setConfiguration();
         this.mobility = new Mobility(this.mobilityConfig);
@@ -34,14 +34,14 @@ public class DataManager {
         this.tourismConfig = configuratorReader.getTourismConfigConfig();
     }
 
-    public Map<Object, Object[]> compareData(){
+    public Map<Object, Object[]> compareData() {
         Map<Object, Object[]> mergedMap = new HashMap<>();
 
-        for (Object key: mappedDataMobility.keySet()) {
+        for (Object key : mappedDataMobility.keySet()) {
             if (mappedDataTourism.containsKey(key)) {
                 mergedMap.put(key, new Object[]{mappedDataTourism, mappedDataMobility});
             }
         }
-    return mergedMap;
+        return mergedMap;
     }
 }
