@@ -12,10 +12,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Mobility implements OpenDataHubApiClient {
 
@@ -40,36 +37,35 @@ public class Mobility implements OpenDataHubApiClient {
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject = (JSONObject) jsonParser.parse(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         connection.disconnect();
-        this.objectFromAPI=jsonObject;
+        this.objectFromAPI = jsonObject;
     }
 
     @Override
     public Map<List<Object>, JSONObject> splitPath() {
         String[] steps = this.config.pathToItem.split(">");
-        for(String s:steps){
+        for (String s : steps) {
             this.splittedArray = (JSONArray) objectFromAPI.get(s);
         }
         List<Mapping> mappings = this.config.mapping;
         List<String> keyPaths = new ArrayList<>();
-        for(int i = 0; i<mappings.size(); i++) {
-            keyPaths.add(mappings.get(i).getKeyPath());
+        for (Mapping mapping : mappings) {
+            keyPaths.add(mapping.getKeyPath());
         }
         return mapData(objectFromAPI, keyPaths);
 
     }
 
-    private  Map<List<Object>, JSONObject> mapData(JSONObject jsonData, List<String> keyPaths) {
+    private Map<List<Object>, JSONObject> mapData(JSONObject jsonData, List<String> keyPaths) {
         Map<List<Object>, JSONObject> mappedData = new HashMap<>();
         String[] pathStepToItem = this.config.pathToItem.split(">");
         Object items = objectFromAPI;
-        for(String nextStep: pathStepToItem){
-            items = goIntoJSON(items,nextStep);
+        for (String nextStep : pathStepToItem) {
+            items = goIntoJSON(items, nextStep);
         }
         JSONArray itemArray = (JSONArray) items;
-        for (int i = 0; i < itemArray.size(); i++) {
-            JSONObject item = (JSONObject) itemArray.get(i);
+        for (Object o : itemArray) {
+            JSONObject item = (JSONObject) o;
             List<Object> key = new ArrayList<>();
-
             for (String keyPath : keyPaths) {
                 Object keyValue = getValueByPath(item, keyPath);
                 key.add(keyValue);
@@ -84,15 +80,14 @@ public class Mobility implements OpenDataHubApiClient {
     private static Object getValueByPath(JSONObject jsonObject, String path) {
         String[] keys = path.split(">");
         JSONObject currentObject = jsonObject;
-        String lastKey = keys[keys.length-1];
-        for (int i = 0; i< keys.length; i++) {
+        String lastKey = keys[keys.length - 1];
+        for (int i = 0; i < keys.length; i++) {
             if (currentObject.containsKey(keys[i])) {
                 Object value = currentObject.get(keys[i]);
                 if (value instanceof JSONObject) {
                     currentObject = (JSONObject) value;
-                }else if(value instanceof JSONArray && keys[i+1]==lastKey){
-                    Object jsonArrayReturnValue = handleJsonArrayValue((JSONArray) value, lastKey);
-                    return jsonArrayReturnValue;
+                } else if (value instanceof JSONArray && Objects.equals(keys[i + 1], lastKey)) {
+                    return handleJsonArrayValue((JSONArray) value, lastKey);
                 } else {
                     return value;
                 }
