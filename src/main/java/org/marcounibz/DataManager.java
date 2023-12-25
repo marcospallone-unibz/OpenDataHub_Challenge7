@@ -34,18 +34,19 @@ public class DataManager {
         this.tourismConfig = configuratorReader.getTourismConfigConfig();
     }
 
-    public Map<JSONObject, JSONObject> compareData() {
-        Map<JSONObject, JSONObject> mergedMap = new HashMap<>();
-
+    public Map<List<Object>, JSONObject> mergeData() {
+        Map<List<Object>, JSONObject> resultMap = new HashMap<>();
         for (Object key : mappedDataMobility.keySet()) {
             if (mappedDataTourism.containsKey(key)) {
-                /*mergedMap.put(mappedDataMobility.get(key), mappedDataTourism.get(key));*/
                 System.out.println(key);
                 System.out.println(mappedDataMobility.get(key));
                 System.out.println(mappedDataTourism.get(key));
                 mappedDataTourism.remove(key);
             }
         }
-        return mergedMap;
+        resultMap.putAll(mappedDataTourism);
+        resultMap.putAll(mappedDataMobility);
+        return resultMap;
     }
+
 }

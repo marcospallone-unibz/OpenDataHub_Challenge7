@@ -13,12 +13,7 @@
           "keyPath": "pcoordinate>x"
         }
       ],
-      "keysToCheckDuplicate": [
-        {
-        "value":"",
-        "newKey":""
-        }
-      ]
+      "keyWhereCheckDuplicate": "x"
     },
 
     {
@@ -34,12 +29,7 @@
           "keyPath": "GpsInfo>Longitude"
         }
       ],
-      "keysToCheckDuplicate": [
-        {
-          "value":"",
-          "newKey":""
-        }
-      ]
+      "keyWhereCheckDuplicate": "Longitude"
     }
   ]
 }

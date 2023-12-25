@@ -49,7 +49,6 @@ public class Mobility implements OpenDataHubApiClient {
             keyPaths.add(mapping.getKeyPath());
         }
         return mapData(objectFromAPI, keyPaths);
-
     }
 
     private Map<List<Object>, JSONObject> mapData(JSONObject jsonData, List<String> keyPaths) {
