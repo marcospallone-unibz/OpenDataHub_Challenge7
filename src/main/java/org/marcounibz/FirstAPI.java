@@ -14,13 +14,13 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public class Mobility implements OpenDataHubApiClient {
+public class FirstAPI implements OpenDataHubApiClient {
 
     OpenDataHubApiConfig config;
     JSONObject objectFromAPI;
     JSONArray splittedArray;
 
-    public Mobility(OpenDataHubApiConfig config) throws Exception {
+    public FirstAPI(OpenDataHubApiConfig config) throws Exception {
         this.config = config;
         fetchDataFromApi();
     }
@@ -48,10 +48,10 @@ public class Mobility implements OpenDataHubApiClient {
         for (Mapping mapping : mappings) {
             keyPaths.add(mapping.getKeyPath());
         }
-        return mapData(objectFromAPI, keyPaths);
+        return mapData(keyPaths);
     }
 
-    private Map<List<Object>, JSONObject> mapData(JSONObject jsonData, List<String> keyPaths) {
+    private Map<List<Object>, JSONObject> mapData(List<String> keyPaths) {
         Map<List<Object>, JSONObject> mappedData = new HashMap<>();
         String[] pathStepToItem = this.config.pathToItem.split(">");
         Object items = objectFromAPI;
@@ -104,7 +104,7 @@ public class Mobility implements OpenDataHubApiClient {
         return null;
     }
 
-    public Object goIntoJSON( Object obj, String nextStep){
+    public Object goIntoJSON(Object obj, String nextStep){
         Object returnValue = null;
         if(obj instanceof JSONArray jsonArray){
             for (Object objInJsonArray : jsonArray) {

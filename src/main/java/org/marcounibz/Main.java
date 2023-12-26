@@ -8,8 +8,6 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         DataManager dataManager = new DataManager();
-        Map<List<Object>, JSONObject> mergedMap;
-        mergedMap = dataManager.mergeData();
-        System.out.println(mergedMap);
+        dataManager.checkDuplicates();
     }
 }

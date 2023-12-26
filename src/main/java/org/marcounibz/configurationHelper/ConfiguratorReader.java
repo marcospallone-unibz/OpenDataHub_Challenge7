@@ -14,8 +14,8 @@ import java.io.IOException;
 public class ConfiguratorReader {
     JSONParser parser = new JSONParser();
     Gson gson = new Gson();
-    OpenDataHubApiConfig mobilityConfig;
-    OpenDataHubApiConfig tourismConfig;
+    OpenDataHubApiConfig firstConfig;
+    OpenDataHubApiConfig secondConfig;
 
 
     public void readDataFromConfigurationFile() throws IOException, ParseException {
@@ -25,18 +25,18 @@ public class ConfiguratorReader {
         JSONObject api1 = (JSONObject) apiClients.get(0);
         JSONObject api2 = (JSONObject) apiClients.get(1);
 
-        mobilityConfig = gson.fromJson(api1.toString(), OpenDataHubApiConfig.class);
-        tourismConfig = gson.fromJson(api2.toString(), OpenDataHubApiConfig.class);
+        firstConfig = gson.fromJson(api1.toString(), OpenDataHubApiConfig.class);
+        secondConfig = gson.fromJson(api2.toString(), OpenDataHubApiConfig.class);
 
     }
 
-    public OpenDataHubApiConfig getMobilityConfig() {
-        OpenDataHubApiConfig copyOfMobilityConfig = this.mobilityConfig;
+    public OpenDataHubApiConfig getFirstConfig() {
+        OpenDataHubApiConfig copyOfMobilityConfig = this.firstConfig;
         return copyOfMobilityConfig;
     }
 
     public OpenDataHubApiConfig getTourismConfigConfig() {
-        OpenDataHubApiConfig copyOfTourismConfig = this.tourismConfig;
+        OpenDataHubApiConfig copyOfTourismConfig = this.secondConfig;
         return copyOfTourismConfig;
     }
 

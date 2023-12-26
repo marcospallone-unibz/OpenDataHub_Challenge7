@@ -14,12 +14,12 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public class Tourism implements OpenDataHubApiClient {
+public class SecondAPI implements OpenDataHubApiClient {
     OpenDataHubApiConfig config;
     JSONObject objectFromAPI;
     JSONArray splittedArray;
 
-    public Tourism(OpenDataHubApiConfig config) throws Exception {
+    public SecondAPI(OpenDataHubApiConfig config) throws Exception {
         this.config = config;
         fetchDataFromApi();
     }
