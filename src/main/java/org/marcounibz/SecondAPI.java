@@ -36,7 +36,7 @@ public class SecondAPI implements OpenDataHubApiClient {
         this.objectFromAPI = jsonObject;
     }
 
-    @Override
+    /*@Override
     public Map<List<Object>, JSONObject> splitPath() {
         String[] steps = this.config.pathToItem.split(">");
         for (String s : steps) {
@@ -118,7 +118,7 @@ public class SecondAPI implements OpenDataHubApiClient {
             returnValue = JSONObject.get(nextStep);
         }
         return returnValue;
-    }
+    }*/
 }
 
 

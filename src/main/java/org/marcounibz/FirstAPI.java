@@ -37,7 +37,7 @@ public class FirstAPI implements OpenDataHubApiClient {
         this.objectFromAPI = jsonObject;
     }
 
-    @Override
+    /*@Override
     public Map<List<Object>, JSONObject> splitPath() {
         String[] steps = this.config.pathToItem.split(">");
         for (String s : steps) {
@@ -49,9 +49,9 @@ public class FirstAPI implements OpenDataHubApiClient {
             keyPaths.add(mapping.getKeyPath());
         }
         return mapData(keyPaths);
-    }
+    }*/
 
-    private Map<List<Object>, JSONObject> mapData(List<String> keyPaths) {
+    /*private Map<List<Object>, JSONObject> mapData(List<String> keyPaths) {
         Map<List<Object>, JSONObject> mappedData = new HashMap<>();
         String[] pathStepToItem = this.config.pathToItem.split(">");
         Object items = objectFromAPI;
@@ -118,6 +118,6 @@ public class FirstAPI implements OpenDataHubApiClient {
             returnValue = JSONObject.get(nextStep);
         }
         return returnValue;
-    }
+    }*/
 }
 

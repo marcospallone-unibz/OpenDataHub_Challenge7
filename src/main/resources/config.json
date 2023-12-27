@@ -13,7 +13,7 @@
           "keyPath": "pcoordinate>x"
         }
       ],
-      "keyWhereCheckDuplicate": "data>pcoordinate>x"
+      "keyWhereCheckDuplicate": "data>pavailable"
     },
 
     {
@@ -29,7 +29,7 @@
           "keyPath": "GpsInfo>Longitude"
         }
       ],
-      "keyWhereCheckDuplicate": "Items>GpsInfo>Longitude"
+      "keyWhereCheckDuplicate": "Items>_Meta>Reduced"
     }
   ]
 }
