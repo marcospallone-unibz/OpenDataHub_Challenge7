@@ -8,6 +8,8 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         DataManager dataManager = new DataManager();
-        dataManager.checkDuplicates();
+        JSONObject jsonObject;
+        jsonObject = dataManager.checkDuplicates();
+        System.out.println(jsonObject);
     }
 }

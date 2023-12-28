@@ -1,6 +1,7 @@
 package org.marcounibz;
 
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.marcounibz.configurationHelper.ConfiguratorReader;
@@ -34,8 +35,7 @@ public class DataManager {
         this.secondConfig = configuratorReader.getTourismConfigConfig();
     }
 
-    public void checkDuplicates() {
-        Object returnValue = new Object();
+    public JSONObject checkDuplicates() {
         Object firstAPIValues = this.firstAPIObject;
         Object secondAPIValues = this.secondAPIObject;
         String[] firstAPISteps = this.firstConfig.keyWhereCheckDuplicate.split(">");
@@ -60,24 +60,10 @@ public class DataManager {
                 }
             }
         }
-        getDuplicatesKeys(duplicatesValue);
+        return prepareValueToReturn(duplicatesValue);
     }
 
-    public Set<String> getDuplicatesKeys(List<Object> duplicates){
-        Set<String> keys = new HashSet<>();
-        if(this.duplicatesFound){
-            for(Object o:duplicates){
-                for (Map.Entry<String, Object> entry : this.mergedMap.entrySet()) {
-                    if (Objects.equals(o, entry.getValue())) {
-                        keys.add(entry.getKey());
-                    }
-                }
-            }
-        }
-        return keys;
-    }
-
-    public JSONObject prepareValueToReturn(){
+    private JSONObject prepareValueToReturn(List<Object> duplicatesValue){
         JSONObject merged = new JSONObject();
         assert this.firstAPIObject != null;
         assert this.secondAPIObject != null;
@@ -86,10 +72,25 @@ public class DataManager {
         firstAPIKeys.forEach((e) ->{
             merged.put(e, this.firstAPIObject.get(e));
         });
-
         secondAPIKeys.forEach((e) ->{
             merged.put(e, this.secondAPIObject.get(e));
         });
+        return removeDuplicates(merged, duplicatesValue);
+    }
+
+    private JSONObject removeDuplicates(JSONObject merged, List<Object> duplicatesValues){
+        List<String> firstAPISteps = List.of(this.firstConfig.keyWhereCheckDuplicate.split(">"));
+        List<String> secondAPISteps = List.of(this.secondConfig.keyWhereCheckDuplicate.split(">"));
+        findDuplicates(firstAPISteps, merged, duplicatesValues);
+        findDuplicates(secondAPISteps, merged, duplicatesValues);
+        return addDuplicateValue(merged, duplicatesValues);
+    }
+
+    private JSONObject addDuplicateValue(JSONObject merged, List<Object> duplicatesValues) {
+        if(duplicatesValues!=null){
+            merged.put("newKey", duplicatesValues.get(0));
+            merged.put("numberOfDuplicates", duplicatesValues.size());
+        }
         return merged;
     }
 
@@ -118,5 +119,36 @@ public class DataManager {
             this.mergedMap.put(nextStep, JSONObject.get(nextStep));
         }
         return returnValue;
+    }
+
+    public Object findDuplicates(List<String> steps, Object mergedCopy, List<Object> duplicatesValues){
+        for (int i=0; i<steps.size(); i++) {
+            if(i!= steps.size()-1){
+                if(mergedCopy instanceof JSONObject jsonObject){
+                    mergedCopy = jsonObject.get(steps.get(i));
+                } else if (mergedCopy instanceof JSONArray jsonArray){
+                    for(Object obj:jsonArray){
+                        if(obj instanceof JSONObject jsonObject) {
+                            findDuplicates(steps.subList(i, steps.size()), jsonObject, duplicatesValues);
+                        }
+                    }
+                }
+            } else {
+                if(mergedCopy instanceof JSONObject jsonObject){
+                    if(duplicatesValues.contains(jsonObject.get(steps.get(i)))){
+                        jsonObject.remove(steps.get(i));
+                    }
+                } else if (mergedCopy instanceof JSONArray jsonArray){
+                    for(Object obj:jsonArray){
+                        if(obj instanceof JSONObject jsonObject) {
+                            if(duplicatesValues.contains(jsonObject.get(steps.get(i)))){
+                                jsonObject.remove(steps.get(i));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return mergedCopy;
     }
 }
