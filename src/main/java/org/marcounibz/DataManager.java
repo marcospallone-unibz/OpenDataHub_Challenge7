@@ -19,6 +19,7 @@ public class DataManager {
     JSONObject secondAPIObject;
     boolean duplicatesFound = false;
     Map<String, Object> mergedMap = new HashMap<>();
+    String replacementKey;
 
     public DataManager() throws Exception {
         setConfiguration();
@@ -32,7 +33,8 @@ public class DataManager {
         ConfiguratorReader configuratorReader = new ConfiguratorReader();
         configuratorReader.readDataFromConfigurationFile();
         this.firstConfig = configuratorReader.getFirstConfig();
-        this.secondConfig = configuratorReader.getTourismConfigConfig();
+        this.secondConfig = configuratorReader.getSecondConfig();
+        this.replacementKey = configuratorReader.getReplacementKey();
     }
 
     public JSONObject checkDuplicates() {
@@ -41,17 +43,16 @@ public class DataManager {
         String[] firstAPISteps = this.firstConfig.keyWhereCheckDuplicate.split(">");
         String[] secondAPISteps = this.secondConfig.keyWhereCheckDuplicate.split(">");
         List<Object> duplicatesValue = new ArrayList<>();
-
         for (String s : firstAPISteps) {
             firstAPIValues = goIntoJSON(firstAPIValues, s);
         }
         for (String s : secondAPISteps) {
             secondAPIValues = goIntoJSON(secondAPIValues, s);
         }
-        if(firstAPIValues instanceof ArrayList<?> firstArray){
-            if(secondAPIValues instanceof ArrayList<?> secondArray){
-                for(Object obj1:firstArray){
-                    for(Object obj2:secondArray){
+        if (firstAPIValues instanceof ArrayList<?> firstArray) {
+            if (secondAPIValues instanceof ArrayList<?> secondArray) {
+                for (Object obj1 : firstArray) {
+                    for (Object obj2 : secondArray) {
                         if (obj1.equals(obj2)) {
                             this.duplicatesFound = true;
                             duplicatesValue.add(obj1);
@@ -63,46 +64,48 @@ public class DataManager {
         return prepareValueToReturn(duplicatesValue);
     }
 
-    private JSONObject prepareValueToReturn(List<Object> duplicatesValue){
+    private JSONObject prepareValueToReturn(List<Object> duplicatesValue) {
         JSONObject merged = new JSONObject();
-        assert this.firstAPIObject != null;
-        assert this.secondAPIObject != null;
-        Set<String> firstAPIKeys = this.firstAPIObject.keySet();
-        Set<String> secondAPIKeys = this.secondAPIObject.keySet();
-        firstAPIKeys.forEach((e) ->{
-            merged.put(e, this.firstAPIObject.get(e));
-        });
-        secondAPIKeys.forEach((e) ->{
-            merged.put(e, this.secondAPIObject.get(e));
-        });
+        if (this.firstAPIObject != null) {
+            Set<String> firstAPIKeys = this.firstAPIObject.keySet();
+            firstAPIKeys.forEach((e) -> {
+                merged.put(e, this.firstAPIObject.get(e));
+            });
+        }
+        if (this.secondAPIObject != null) {
+            Set<String> secondAPIKeys = this.secondAPIObject.keySet();
+            secondAPIKeys.forEach((e) -> {
+                merged.put(e, this.secondAPIObject.get(e));
+            });
+        }
         return removeDuplicates(merged, duplicatesValue);
     }
 
-    private JSONObject removeDuplicates(JSONObject merged, List<Object> duplicatesValues){
+    private JSONObject removeDuplicates(JSONObject merged, List<Object> duplicatesValues) {
         List<String> firstAPISteps = List.of(this.firstConfig.keyWhereCheckDuplicate.split(">"));
         List<String> secondAPISteps = List.of(this.secondConfig.keyWhereCheckDuplicate.split(">"));
-        findDuplicates(firstAPISteps, merged, duplicatesValues);
-        findDuplicates(secondAPISteps, merged, duplicatesValues);
+        goIntoJSONToRemoveDuplicates(firstAPISteps, merged, duplicatesValues);
+        goIntoJSONToRemoveDuplicates(secondAPISteps, merged, duplicatesValues);
         return addDuplicateValue(merged, duplicatesValues);
     }
 
     private JSONObject addDuplicateValue(JSONObject merged, List<Object> duplicatesValues) {
-        if(duplicatesValues!=null){
-            merged.put("newKey", duplicatesValues.get(0));
+        if (duplicatesValues != null) {
+            merged.put(this.replacementKey, duplicatesValues.get(0));
             merged.put("numberOfDuplicates", duplicatesValues.size());
         }
         return merged;
     }
 
-    public Object goIntoJSON(Object obj, String nextStep){
+    public Object goIntoJSON(Object obj, String nextStep) {
         Object returnValue = null;
-        List<Object> moreValue= new ArrayList<>();
+        List<Object> moreValue = new ArrayList<>();
         returnValue = goIntoAnnidate(obj, moreValue, nextStep, returnValue);
         return returnValue;
     }
 
-    public Object goIntoAnnidate(Object obj, List<Object> moreValue, String nextStep, Object returnValue){
-        if(obj instanceof ArrayList<?> arrayList){
+    public Object goIntoAnnidate(Object obj, List<Object> moreValue, String nextStep, Object returnValue) {
+        if (obj instanceof ArrayList<?> arrayList) {
             for (Object objInJsonArray : arrayList) {
                 if (objInJsonArray instanceof JSONObject jsonObj) {
                     if (jsonObj.containsKey(nextStep)) {
@@ -114,34 +117,34 @@ public class DataManager {
                 }
             }
             return moreValue;
-        }else if(obj instanceof JSONObject JSONObject){
+        } else if (obj instanceof JSONObject JSONObject) {
             returnValue = JSONObject.get(nextStep);
             this.mergedMap.put(nextStep, JSONObject.get(nextStep));
         }
         return returnValue;
     }
 
-    public Object findDuplicates(List<String> steps, Object mergedCopy, List<Object> duplicatesValues){
-        for (int i=0; i<steps.size(); i++) {
-            if(i!= steps.size()-1){
-                if(mergedCopy instanceof JSONObject jsonObject){
+    public void goIntoJSONToRemoveDuplicates(List<String> steps, Object mergedCopy, List<Object> duplicatesValues) {
+        for (int i = 0; i < steps.size(); i++) {
+            if (i != steps.size() - 1) {
+                if (mergedCopy instanceof JSONObject jsonObject) {
                     mergedCopy = jsonObject.get(steps.get(i));
-                } else if (mergedCopy instanceof JSONArray jsonArray){
-                    for(Object obj:jsonArray){
-                        if(obj instanceof JSONObject jsonObject) {
-                            findDuplicates(steps.subList(i, steps.size()), jsonObject, duplicatesValues);
+                } else if (mergedCopy instanceof JSONArray jsonArray) {
+                    for (Object obj : jsonArray) {
+                        if (obj instanceof JSONObject jsonObject) {
+                            goIntoJSONToRemoveDuplicates(steps.subList(i, steps.size()), jsonObject, duplicatesValues);
                         }
                     }
                 }
             } else {
-                if(mergedCopy instanceof JSONObject jsonObject){
-                    if(duplicatesValues.contains(jsonObject.get(steps.get(i)))){
+                if (mergedCopy instanceof JSONObject jsonObject) {
+                    if (duplicatesValues.contains(jsonObject.get(steps.get(i)))) {
                         jsonObject.remove(steps.get(i));
                     }
-                } else if (mergedCopy instanceof JSONArray jsonArray){
-                    for(Object obj:jsonArray){
-                        if(obj instanceof JSONObject jsonObject) {
-                            if(duplicatesValues.contains(jsonObject.get(steps.get(i)))){
+                } else if (mergedCopy instanceof JSONArray jsonArray) {
+                    for (Object obj : jsonArray) {
+                        if (obj instanceof JSONObject jsonObject) {
+                            if (duplicatesValues.contains(jsonObject.get(steps.get(i)))) {
                                 jsonObject.remove(steps.get(i));
                             }
                         }
@@ -149,6 +152,5 @@ public class DataManager {
                 }
             }
         }
-        return mergedCopy;
     }
 }

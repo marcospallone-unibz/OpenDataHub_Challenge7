@@ -4,7 +4,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.marcounibz.interfaces.OpenDataHubApiClient;
-import org.marcounibz.mapping.Mapping;
 import org.marcounibz.mapping.OpenDataHubApiConfig;
 
 import java.io.InputStream;
@@ -12,7 +11,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
 
 public class FirstAPI implements OpenDataHubApiClient {
 
