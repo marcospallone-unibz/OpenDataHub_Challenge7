@@ -90,7 +90,7 @@ public class DataManager {
     }
 
     private JSONObject addDuplicateValue(JSONObject merged, List<Object> duplicatesValues) {
-        if (duplicatesValues != null) {
+        if (!duplicatesValues.isEmpty()) {
             merged.put(this.replacementKey, duplicatesValues.get(0));
             merged.put("numberOfDuplicates", duplicatesValues.size());
         }
