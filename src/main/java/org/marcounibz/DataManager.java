@@ -5,6 +5,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.marcounibz.configurationHelper.ConfiguratorReader;
+import org.marcounibz.mapping.Mapping;
 import org.marcounibz.mapping.OpenDataHubApiConfig;
 
 import java.io.IOException;
@@ -20,6 +21,8 @@ public class DataManager {
     boolean duplicatesFound = false;
     Map<String, Object> mergedMap = new HashMap<>();
     String replacementKey;
+    List<String> testListKeys = new ArrayList<>();
+    List<Object> testListobjs = new ArrayList<>();
 
     public DataManager() throws Exception {
         setConfiguration();
@@ -38,30 +41,35 @@ public class DataManager {
     }
 
     public JSONObject checkDuplicates() {
-        Object firstAPIValues = this.firstAPIObject;
-        Object secondAPIValues = this.secondAPIObject;
-        String[] firstAPISteps = this.firstConfig.keyWhereCheckDuplicate.split(">");
-        String[] secondAPISteps = this.secondConfig.keyWhereCheckDuplicate.split(">");
-        List<Object> duplicatesValue = new ArrayList<>();
-        for (String s : firstAPISteps) {
-            firstAPIValues = goIntoJSON(firstAPIValues, s);
-        }
-        for (String s : secondAPISteps) {
-            secondAPIValues = goIntoJSON(secondAPIValues, s);
-        }
-        if (firstAPIValues instanceof ArrayList<?> firstArray) {
-            if (secondAPIValues instanceof ArrayList<?> secondArray) {
-                for (Object obj1 : firstArray) {
-                    for (Object obj2 : secondArray) {
-                        if (obj1.equals(obj2)) {
-                            this.duplicatesFound = true;
-                            duplicatesValue.add(obj1);
+        for(Mapping m1:this.firstConfig.mapping){
+            for(Mapping m2:this.secondConfig.mapping){
+                Object firstAPIValues = this.firstAPIObject;
+                Object secondAPIValues = this.secondAPIObject;
+                String[] firstAPISteps = m1.getKeyPath().split(">");
+                String[] secondAPISteps = m2.getKeyPath().split(">");
+                List<Object> duplicatesValue = new ArrayList<>();
+                for (String s : firstAPISteps) {
+                    firstAPIValues = goIntoJSON(firstAPIValues, s);
+                }
+                for (String s : secondAPISteps) {
+                    secondAPIValues = goIntoJSON(secondAPIValues, s);
+                }
+                if (firstAPIValues instanceof ArrayList<?> firstArray) {
+                    if (secondAPIValues instanceof ArrayList<?> secondArray) {
+                        for (Object obj1 : firstArray) {
+                            for (Object obj2 : secondArray) {
+                                if (obj1.equals(obj2)) {
+                                    this.duplicatesFound = true;
+                                    duplicatesValue.add(obj1);
+                                }
+                            }
                         }
                     }
                 }
+                return prepareValueToReturn(duplicatesValue);
             }
         }
-        return prepareValueToReturn(duplicatesValue);
+        return null;
     }
 
     private JSONObject prepareValueToReturn(List<Object> duplicatesValue) {
@@ -94,6 +102,7 @@ public class DataManager {
             merged.put(this.replacementKey, duplicatesValues.get(0));
             merged.put("numberOfDuplicates", duplicatesValues.size());
         }
+        merged.put("objsWhereDuplicatesFound", testListobjs);
         return merged;
     }
 
@@ -111,6 +120,7 @@ public class DataManager {
                     if (jsonObj.containsKey(nextStep)) {
                         moreValue.add(jsonObj.get(nextStep));
                         this.mergedMap.put(nextStep, jsonObj.get(nextStep));
+                        this.testListKeys.add(nextStep);
                     }
                 } else {
                     goIntoAnnidate(objInJsonArray, moreValue, nextStep, returnValue);
@@ -120,6 +130,7 @@ public class DataManager {
         } else if (obj instanceof JSONObject JSONObject) {
             returnValue = JSONObject.get(nextStep);
             this.mergedMap.put(nextStep, JSONObject.get(nextStep));
+            this.testListKeys.add(nextStep);
         }
         return returnValue;
     }
@@ -140,12 +151,14 @@ public class DataManager {
                 if (mergedCopy instanceof JSONObject jsonObject) {
                     if (duplicatesValues.contains(jsonObject.get(steps.get(i)))) {
                         jsonObject.remove(steps.get(i));
+                        this.testListobjs.add(jsonObject);
                     }
                 } else if (mergedCopy instanceof JSONArray jsonArray) {
                     for (Object obj : jsonArray) {
                         if (obj instanceof JSONObject jsonObject) {
                             if (duplicatesValues.contains(jsonObject.get(steps.get(i)))) {
                                 jsonObject.remove(steps.get(i));
+                                this.testListobjs.add(jsonObject);
                             }
                         }
                     }
