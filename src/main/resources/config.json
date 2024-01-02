@@ -34,4 +34,12 @@
       ]
     }
   ]
+  "duplicate": [
+  { "key1": "name1",
+   "key2" : "name2",
+   "newName" : "newName"},
+   { "key1": "name1",
+     "key2" : "name2",
+     "newName" : "newName" }
+    ]
 }
