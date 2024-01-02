@@ -1,16 +1,13 @@
 package org.marcounibz;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import org.json.simple.JSONObject;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
         DataManager dataManager = new DataManager();
-        Map<Object, Object[]> mergedMap;
-        mergedMap = dataManager.compareData();
-        System.out.println(mergedMap);
-        //dataManager.compareData();
+        JSONObject jsonObject;
+        jsonObject = dataManager.checkDuplicates();
+        System.out.println(jsonObject);
     }
 }

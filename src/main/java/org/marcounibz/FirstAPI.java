@@ -4,7 +4,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.marcounibz.interfaces.OpenDataHubApiClient;
-import org.marcounibz.mapping.Mapping;
 import org.marcounibz.mapping.OpenDataHubApiConfig;
 
 import java.io.InputStream;
@@ -12,14 +11,14 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
 
-public class Tourism implements OpenDataHubApiClient {
+public class FirstAPI implements OpenDataHubApiClient {
+
     OpenDataHubApiConfig config;
     JSONObject objectFromAPI;
     JSONArray splittedArray;
 
-    public Tourism(OpenDataHubApiConfig config) throws Exception {
+    public FirstAPI(OpenDataHubApiConfig config) throws Exception {
         this.config = config;
         fetchDataFromApi();
     }
@@ -36,7 +35,7 @@ public class Tourism implements OpenDataHubApiClient {
         this.objectFromAPI = jsonObject;
     }
 
-    @Override
+    /*@Override
     public Map<List<Object>, JSONObject> splitPath() {
         String[] steps = this.config.pathToItem.split(">");
         for (String s : steps) {
@@ -47,12 +46,10 @@ public class Tourism implements OpenDataHubApiClient {
         for (Mapping mapping : mappings) {
             keyPaths.add(mapping.getKeyPath());
         }
-        return mapData(objectFromAPI, keyPaths);
+        return mapData(keyPaths);
+    }*/
 
-
-    }
-
-    private Map<List<Object>, JSONObject> mapData(JSONObject jsonData, List<String> keyPaths) {
+    /*private Map<List<Object>, JSONObject> mapData(List<String> keyPaths) {
         Map<List<Object>, JSONObject> mappedData = new HashMap<>();
         String[] pathStepToItem = this.config.pathToItem.split(">");
         Object items = objectFromAPI;
@@ -63,15 +60,12 @@ public class Tourism implements OpenDataHubApiClient {
         for (Object o : itemArray) {
             JSONObject item = (JSONObject) o;
             List<Object> key = new ArrayList<>();
-
             for (String keyPath : keyPaths) {
                 Object keyValue = getValueByPath(item, keyPath);
                 key.add(keyValue);
             }
-
             mappedData.put(key, item);
         }
-
         return mappedData;
     }
 
@@ -93,7 +87,6 @@ public class Tourism implements OpenDataHubApiClient {
                 return null;
             }
         }
-
         return null;
     }
 
@@ -109,9 +102,9 @@ public class Tourism implements OpenDataHubApiClient {
         return null;
     }
 
-    public Object goIntoJSON(Object obj, String nextStep) {
+    public Object goIntoJSON(Object obj, String nextStep){
         Object returnValue = null;
-        if (obj instanceof JSONArray jsonArray) {
+        if(obj instanceof JSONArray jsonArray){
             for (Object objInJsonArray : jsonArray) {
                 if (objInJsonArray instanceof JSONObject jsonObj) {
                     if (jsonObj.containsKey(nextStep)) {
@@ -119,11 +112,10 @@ public class Tourism implements OpenDataHubApiClient {
                     }
                 }
             }
-        } else if (obj instanceof JSONObject JSONObject) {
+        }else if(obj instanceof JSONObject JSONObject){
             returnValue = JSONObject.get(nextStep);
         }
         return returnValue;
-    }
+    }*/
 }
-
 

@@ -4,7 +4,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.marcounibz.interfaces.OpenDataHubApiClient;
-import org.marcounibz.mapping.Mapping;
 import org.marcounibz.mapping.OpenDataHubApiConfig;
 
 import java.io.InputStream;
@@ -12,18 +11,13 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
 
-public class Mobility implements OpenDataHubApiClient {
-
+public class SecondAPI implements OpenDataHubApiClient {
     OpenDataHubApiConfig config;
     JSONObject objectFromAPI;
     JSONArray splittedArray;
-    List<String[]> keyPaths = new ArrayList<>();
-    List<Object> keys = new ArrayList<>();
-    Map<List<Object>, JSONObject> mappedData;
 
-    public Mobility(OpenDataHubApiConfig config) throws Exception {
+    public SecondAPI(OpenDataHubApiConfig config) throws Exception {
         this.config = config;
         fetchDataFromApi();
     }
@@ -40,7 +34,7 @@ public class Mobility implements OpenDataHubApiClient {
         this.objectFromAPI = jsonObject;
     }
 
-    @Override
+    /*@Override
     public Map<List<Object>, JSONObject> splitPath() {
         String[] steps = this.config.pathToItem.split(">");
         for (String s : steps) {
@@ -52,6 +46,7 @@ public class Mobility implements OpenDataHubApiClient {
             keyPaths.add(mapping.getKeyPath());
         }
         return mapData(objectFromAPI, keyPaths);
+
 
     }
 
@@ -70,10 +65,8 @@ public class Mobility implements OpenDataHubApiClient {
                 Object keyValue = getValueByPath(item, keyPath);
                 key.add(keyValue);
             }
-
             mappedData.put(key, item);
         }
-
         return mappedData;
     }
 
@@ -95,42 +88,35 @@ public class Mobility implements OpenDataHubApiClient {
                 return null;
             }
         }
-
         return null;
     }
 
     private static Object handleJsonArrayValue(JSONArray jsonArray, String lastKey) {
         for (Object obj : jsonArray) {
-            if (obj instanceof JSONObject) {
-                JSONObject jsonObj = (JSONObject) obj;
-
+            if (obj instanceof JSONObject jsonObj) {
                 if (jsonObj.containsKey(lastKey)) {
-                    Object foundValue = jsonObj.get(lastKey);
-                    return foundValue;
+                    return jsonObj.get(lastKey);
                 }
             }
         }
         return null;
     }
 
-    public Object goIntoJSON( Object obj, String nextStep){
+    public Object goIntoJSON(Object obj, String nextStep) {
         Object returnValue = null;
-        if(obj instanceof JSONArray ){
-            JSONArray jsonArray = (JSONArray) obj;
+        if (obj instanceof JSONArray jsonArray) {
             for (Object objInJsonArray : jsonArray) {
-                if (objInJsonArray instanceof JSONObject) {
-                    JSONObject jsonObj = (JSONObject) objInJsonArray;
+                if (objInJsonArray instanceof JSONObject jsonObj) {
                     if (jsonObj.containsKey(nextStep)) {
-                        Object foundValue = jsonObj.get(nextStep);
-                        return foundValue;
+                        return jsonObj.get(nextStep);
                     }
                 }
             }
-        }else if(obj instanceof  JSONObject){
-            JSONObject JSONObject = (JSONObject) obj;
+        } else if (obj instanceof JSONObject JSONObject) {
             returnValue = JSONObject.get(nextStep);
         }
         return returnValue;
-    }
+    }*/
 }
+
 

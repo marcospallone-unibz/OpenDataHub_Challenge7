@@ -1,10 +1,10 @@
 {
   "apiClients": [
     {
-      "name": "mobility",
+      "name": "FirstAPI",
       "type": "OpenDataHubApiDatabase1",
-      "url": "https://mobility.api.opendatahub.com/v2/flat%2Cnode/%2A/%2A?limit=200&offset=0&shownull=false&distinct=true",
-      "pathToItem":"data",
+      "url": "https://mobility.api.opendatahub.com/v2/flat%2Cnode/%2A?limit=200&offset=0&shownull=false&distinct=true",
+      "pathToItem": "data",
       "mapping": [
         {
           "keyPath": "pcoordinate>y"
@@ -12,18 +12,14 @@
         {
           "keyPath": "pcoordinate>x"
         }
-      ]
-      "duplicatedKeys":[
-      {"pathFromItem": "scode"},
-      {"pathFromItem": "ptype"}
-      ]
+      ],
+      "keyWhereCheckDuplicate": "data>pavailable"
     },
-
     {
-      "name": "tourism",
+      "name": "SecondAPI",
       "type": "OpenDataHubApiDatabase2",
-      "url": "https://tourism.opendatahub.com/v1/Accommodation?pagenumber=1&roominfo=1-18%2C18&bokfilter=hgv&msssource=sinfo&availabilitychecklanguage=en&detail=0&removenullvalues=false",
-      "pathToItem":"Items",
+      "url": "https://tourism.opendatahub.com/v1/Event?pagenumber=1&removenullvalues=false",
+      "pathToItem": "Items",
       "mapping": [
         {
           "keyPath": "GpsInfo>Latitude"
@@ -31,15 +27,9 @@
         {
           "keyPath": "GpsInfo>Longitude"
         }
-      ]
+      ],
+      "keyWhereCheckDuplicate": "Items>_Meta>Reduced"
     }
-  ]
-  "duplicate": [
-  { "key1": "name1",
-   "key2" : "name2",
-   "newName" : "newName"},
-   { "key1": "name1",
-     "key2" : "name2",
-     "newName" : "newName" }
-    ]
+  ],
+  "replacementKey": "TestKey"
 }

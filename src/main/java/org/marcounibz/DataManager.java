@@ -1,47 +1,156 @@
 package org.marcounibz;
 
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.marcounibz.configurationHelper.ConfiguratorReader;
 import org.marcounibz.mapping.OpenDataHubApiConfig;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DataManager {
-    Mobility mobility;
-    Tourism tourism;
-    OpenDataHubApiConfig mobilityConfig;
-    OpenDataHubApiConfig tourismConfig;
-    Map<List<Object>, JSONObject> mappedDataMobility;
-    Map<List<Object>, JSONObject> mappedDataTourism;
+    FirstAPI firstAPI;
+    SecondAPI secondAPI;
+    OpenDataHubApiConfig firstConfig;
+    OpenDataHubApiConfig secondConfig;
+    JSONObject firstAPIObject;
+    JSONObject secondAPIObject;
+    boolean duplicatesFound = false;
+    Map<String, Object> mergedMap = new HashMap<>();
+    String replacementKey;
 
     public DataManager() throws Exception {
         setConfiguration();
-        this.mobility = new Mobility(this.mobilityConfig);
-        this.tourism = new Tourism(this.tourismConfig);
-        this.mappedDataMobility = this.mobility.splitPath();
-        this.mappedDataTourism = this.tourism.splitPath();
+        this.firstAPI = new FirstAPI(this.firstConfig);
+        this.secondAPI = new SecondAPI(this.secondConfig);
+        this.firstAPIObject = this.firstAPI.objectFromAPI;
+        this.secondAPIObject = this.secondAPI.objectFromAPI;
     }
 
     public void setConfiguration() throws IOException, ParseException {
         ConfiguratorReader configuratorReader = new ConfiguratorReader();
         configuratorReader.readDataFromConfigurationFile();
-        this.mobilityConfig = configuratorReader.getMobilityConfig();
-        this.tourismConfig = configuratorReader.getTourismConfigConfig();
+        this.firstConfig = configuratorReader.getFirstConfig();
+        this.secondConfig = configuratorReader.getSecondConfig();
+        this.replacementKey = configuratorReader.getReplacementKey();
     }
 
-    public Map<Object, Object[]> compareData() {
-        Map<Object, Object[]> mergedMap = new HashMap<>();
-
-        for (Object key : mappedDataMobility.keySet()) {
-            if (mappedDataTourism.containsKey(key)) {
-                mergedMap.put(key, new Object[]{mappedDataTourism, mappedDataMobility});
+    public JSONObject checkDuplicates() {
+        Object firstAPIValues = this.firstAPIObject;
+        Object secondAPIValues = this.secondAPIObject;
+        String[] firstAPISteps = this.firstConfig.keyWhereCheckDuplicate.split(">");
+        String[] secondAPISteps = this.secondConfig.keyWhereCheckDuplicate.split(">");
+        List<Object> duplicatesValue = new ArrayList<>();
+        for (String s : firstAPISteps) {
+            firstAPIValues = goIntoJSON(firstAPIValues, s);
+        }
+        for (String s : secondAPISteps) {
+            secondAPIValues = goIntoJSON(secondAPIValues, s);
+        }
+        if (firstAPIValues instanceof ArrayList<?> firstArray) {
+            if (secondAPIValues instanceof ArrayList<?> secondArray) {
+                for (Object obj1 : firstArray) {
+                    for (Object obj2 : secondArray) {
+                        if (obj1.equals(obj2)) {
+                            this.duplicatesFound = true;
+                            duplicatesValue.add(obj1);
+                        }
+                    }
+                }
             }
         }
-        return mergedMap;
+        return prepareValueToReturn(duplicatesValue);
+    }
+
+    private JSONObject prepareValueToReturn(List<Object> duplicatesValue) {
+        JSONObject merged = new JSONObject();
+        if (this.firstAPIObject != null) {
+            Set<String> firstAPIKeys = this.firstAPIObject.keySet();
+            firstAPIKeys.forEach((e) -> {
+                merged.put(e, this.firstAPIObject.get(e));
+            });
+        }
+        if (this.secondAPIObject != null) {
+            Set<String> secondAPIKeys = this.secondAPIObject.keySet();
+            secondAPIKeys.forEach((e) -> {
+                merged.put(e, this.secondAPIObject.get(e));
+            });
+        }
+        return removeDuplicates(merged, duplicatesValue);
+    }
+
+    private JSONObject removeDuplicates(JSONObject merged, List<Object> duplicatesValues) {
+        List<String> firstAPISteps = List.of(this.firstConfig.keyWhereCheckDuplicate.split(">"));
+        List<String> secondAPISteps = List.of(this.secondConfig.keyWhereCheckDuplicate.split(">"));
+        goIntoJSONToRemoveDuplicates(firstAPISteps, merged, duplicatesValues);
+        goIntoJSONToRemoveDuplicates(secondAPISteps, merged, duplicatesValues);
+        return addDuplicateValue(merged, duplicatesValues);
+    }
+
+    private JSONObject addDuplicateValue(JSONObject merged, List<Object> duplicatesValues) {
+        if (!duplicatesValues.isEmpty()) {
+            merged.put(this.replacementKey, duplicatesValues.get(0));
+            merged.put("numberOfDuplicates", duplicatesValues.size());
+        }
+        return merged;
+    }
+
+    public Object goIntoJSON(Object obj, String nextStep) {
+        Object returnValue = null;
+        List<Object> moreValue = new ArrayList<>();
+        returnValue = goIntoAnnidate(obj, moreValue, nextStep, returnValue);
+        return returnValue;
+    }
+
+    public Object goIntoAnnidate(Object obj, List<Object> moreValue, String nextStep, Object returnValue) {
+        if (obj instanceof ArrayList<?> arrayList) {
+            for (Object objInJsonArray : arrayList) {
+                if (objInJsonArray instanceof JSONObject jsonObj) {
+                    if (jsonObj.containsKey(nextStep)) {
+                        moreValue.add(jsonObj.get(nextStep));
+                        this.mergedMap.put(nextStep, jsonObj.get(nextStep));
+                    }
+                } else {
+                    goIntoAnnidate(objInJsonArray, moreValue, nextStep, returnValue);
+                }
+            }
+            return moreValue;
+        } else if (obj instanceof JSONObject JSONObject) {
+            returnValue = JSONObject.get(nextStep);
+            this.mergedMap.put(nextStep, JSONObject.get(nextStep));
+        }
+        return returnValue;
+    }
+
+    public void goIntoJSONToRemoveDuplicates(List<String> steps, Object mergedCopy, List<Object> duplicatesValues) {
+        for (int i = 0; i < steps.size(); i++) {
+            if (i != steps.size() - 1) {
+                if (mergedCopy instanceof JSONObject jsonObject) {
+                    mergedCopy = jsonObject.get(steps.get(i));
+                } else if (mergedCopy instanceof JSONArray jsonArray) {
+                    for (Object obj : jsonArray) {
+                        if (obj instanceof JSONObject jsonObject) {
+                            goIntoJSONToRemoveDuplicates(steps.subList(i, steps.size()), jsonObject, duplicatesValues);
+                        }
+                    }
+                }
+            } else {
+                if (mergedCopy instanceof JSONObject jsonObject) {
+                    if (duplicatesValues.contains(jsonObject.get(steps.get(i)))) {
+                        jsonObject.remove(steps.get(i));
+                    }
+                } else if (mergedCopy instanceof JSONArray jsonArray) {
+                    for (Object obj : jsonArray) {
+                        if (obj instanceof JSONObject jsonObject) {
+                            if (duplicatesValues.contains(jsonObject.get(steps.get(i)))) {
+                                jsonObject.remove(steps.get(i));
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

@@ -14,30 +14,34 @@ import java.io.IOException;
 public class ConfiguratorReader {
     JSONParser parser = new JSONParser();
     Gson gson = new Gson();
-    OpenDataHubApiConfig mobilityConfig;
-    OpenDataHubApiConfig tourismConfig;
+    OpenDataHubApiConfig firstConfig;
+    OpenDataHubApiConfig secondConfig;
+    String replacementKey;
 
 
     public void readDataFromConfigurationFile() throws IOException, ParseException {
         JSONObject jsonObject = (JSONObject) parser.parse(new FileReader("src/main/resources/config.json"));
         JSONArray apiClients = (JSONArray) jsonObject.get("apiClients");
-
+        this.replacementKey = (String) jsonObject.get("replacementKey");
         JSONObject api1 = (JSONObject) apiClients.get(0);
         JSONObject api2 = (JSONObject) apiClients.get(1);
-
-        mobilityConfig = gson.fromJson(api1.toString(), OpenDataHubApiConfig.class);
-        tourismConfig = gson.fromJson(api2.toString(), OpenDataHubApiConfig.class);
+        this.firstConfig = gson.fromJson(api1.toString(), OpenDataHubApiConfig.class);
+        this.secondConfig = gson.fromJson(api2.toString(), OpenDataHubApiConfig.class);
 
     }
 
-    public OpenDataHubApiConfig getMobilityConfig() {
-        OpenDataHubApiConfig copyOfMobilityConfig = this.mobilityConfig;
+    public OpenDataHubApiConfig getFirstConfig() {
+        OpenDataHubApiConfig copyOfMobilityConfig = this.firstConfig;
         return copyOfMobilityConfig;
     }
 
-    public OpenDataHubApiConfig getTourismConfigConfig() {
-        OpenDataHubApiConfig copyOfTourismConfig = this.tourismConfig;
+    public OpenDataHubApiConfig getSecondConfig() {
+        OpenDataHubApiConfig copyOfTourismConfig = this.secondConfig;
         return copyOfTourismConfig;
+    }
+
+    public String getReplacementKey() {
+        return this.replacementKey;
     }
 
 }
