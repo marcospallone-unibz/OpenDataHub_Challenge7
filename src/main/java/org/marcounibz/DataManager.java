@@ -41,34 +41,7 @@ public class DataManager {
 
     public List<Object> checkDuplicates() {
         List<Object> returnList= new ArrayList<>();
-        for(Mapping m1:this.firstConfig.mapping){
-            for(Mapping m2:this.secondConfig.mapping){
-                Object firstAPIValues = this.firstAPIObject;
-                Object secondAPIValues = this.secondAPIObject;
-                String[] firstAPISteps = m1.getKeyPath().split(">");
-                String[] secondAPISteps = m2.getKeyPath().split(">");
-                List<Object> duplicatesValue = new ArrayList<>();
-                for (String s : firstAPISteps) {
-                    firstAPIValues = goIntoJSON(firstAPIValues, s);
-                }
-                for (String s : secondAPISteps) {
-                    secondAPIValues = goIntoJSON(secondAPIValues, s);
-                }
-                if (firstAPIValues instanceof ArrayList<?> firstArray) {
-                    if (secondAPIValues instanceof ArrayList<?> secondArray) {
-                        for (Object obj1 : firstArray) {
-                            for (Object obj2 : secondArray) {
-                                if (obj1.equals(obj2) && !duplicatesValue.contains(obj1)) {
-                                    this.duplicatesFound = true;
-                                    duplicatesValue.add(obj1);
-                                }
-                            }
-                        }
-                    }
-                }
-                returnList = (prepareValueToReturn(duplicatesValue));
-            }
-        }
+        returnList = getDuplicates(returnList);
         if(duplicatesFound){
             return returnList;
         } else{
@@ -82,7 +55,43 @@ public class DataManager {
         }
     }
 
-    private List<Object> prepareValueToReturn(List<Object> duplicatesValue) {
+    private List<Object> getDuplicates(List<Object> returnList) {
+        for(Mapping m1:this.firstConfig.mapping){
+            for(Mapping m2:this.secondConfig.mapping){
+                Object firstAPIValues = this.firstAPIObject;
+                Object secondAPIValues = this.secondAPIObject;
+                String[] firstAPISteps = m1.getKeyPath().split(">");
+                String[] secondAPISteps = m2.getKeyPath().split(">");
+                List<Object> duplicatesValue = new ArrayList<>();
+                for (String s : firstAPISteps) {
+                    firstAPIValues = goIntoJSON(firstAPIValues, s);
+                }
+                for (String s : secondAPISteps) {
+                    secondAPIValues = goIntoJSON(secondAPIValues, s);
+                }
+                getDuplicatesValues(firstAPIValues, secondAPIValues, duplicatesValue);
+                returnList = (prepareListToReturn(duplicatesValue));
+            }
+        }
+        return returnList;
+    }
+
+    private void getDuplicatesValues(Object firstAPIValues, Object secondAPIValues, List<Object> duplicatesValue) {
+        if (firstAPIValues instanceof ArrayList<?> firstArray) {
+            if (secondAPIValues instanceof ArrayList<?> secondArray) {
+                for (Object obj1 : firstArray) {
+                    for (Object obj2 : secondArray) {
+                        if (obj1.equals(obj2) && !duplicatesValue.contains(obj1)) {
+                            this.duplicatesFound = true;
+                            duplicatesValue.add(obj1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private List<Object> prepareListToReturn(List<Object> duplicatesValue) {
         List<Object> prepareValueToReturnList = new ArrayList<>();
         for(Object duplicate:duplicatesValue){
             JSONObject merged = new JSONObject();
