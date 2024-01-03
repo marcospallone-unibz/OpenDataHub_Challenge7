@@ -8,8 +8,7 @@
         {
           "keyPath": "Items>AccoDetail>de>Zip"
         }
-      ],
-      "keyWhereCheckDuplicate": "data>pavailable"
+      ]
     },
     {
       "name": "SecondAPI",
@@ -19,9 +18,8 @@
         {
           "keyPath": "Items>ContactInfos>de>ZipCode"
         }
-      ],
-      "keyWhereCheckDuplicate": "Items>_Meta>Reduced"
+      ]
     }
   ],
-  "replacementKey": "TestKey"
+  "replacementKey": "CAP"
 }
