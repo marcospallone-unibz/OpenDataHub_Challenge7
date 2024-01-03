@@ -66,7 +66,7 @@ public class DataManager {
                         }
                     }
                 }
-                returnList.add(prepareValueToReturn(duplicatesValue));
+                returnList = (prepareValueToReturn(duplicatesValue));
             }
         }
         if(duplicatesFound){
