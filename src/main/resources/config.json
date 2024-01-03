@@ -3,14 +3,10 @@
     {
       "name": "FirstAPI",
       "type": "OpenDataHubApiDatabase1",
-      "url": "https://mobility.api.opendatahub.com/v2/flat%2Cnode/%2A?limit=200&offset=0&shownull=false&distinct=true",
-      "pathToItem": "data",
+      "url": "https://tourism.opendatahub.com/v1/Accommodation?pagenumber=1&roominfo=1-18%2C18&bokfilter=hgv&msssource=sinfo&availabilitychecklanguage=en&detail=0&removenullvalues=false",
       "mapping": [
         {
-          "keyPath": "pcoordinate>y"
-        },
-        {
-          "keyPath": "pcoordinate>x"
+          "keyPath": "Items>AccoDetail>de>Zip"
         }
       ],
       "keyWhereCheckDuplicate": "data>pavailable"
@@ -19,13 +15,9 @@
       "name": "SecondAPI",
       "type": "OpenDataHubApiDatabase2",
       "url": "https://tourism.opendatahub.com/v1/Event?pagenumber=1&removenullvalues=false",
-      "pathToItem": "Items",
       "mapping": [
         {
-          "keyPath": "GpsInfo>Latitude"
-        },
-        {
-          "keyPath": "GpsInfo>Longitude"
+          "keyPath": "Items>ContactInfos>de>ZipCode"
         }
       ],
       "keyWhereCheckDuplicate": "Items>_Meta>Reduced"
