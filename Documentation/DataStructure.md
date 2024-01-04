@@ -127,36 +127,36 @@ as follows:
     {
       "name": "FirstAPI",
       "type": "OpenDataHubApiDatabase1",
-      "url": "https://mobility.api.opendatahub.com/v2/flat%2Cnode/%2A?limit=200&offset=0&shownull=false&distinct=true",
+      "url": "https://tourism.opendatahub.com/v1/Accommodation?pagenumber=1&roominfo=1-18%2C18&bokfilter=hgv&msssource=sinfo&availabilitychecklanguage=en&detail=0&removenullvalues=false",
       "mapping": [
         {
-          "key": "Latitude",
-          "newKeyName": "newLatitude",
-          "path": "data>GpsPoints>position"
+          "keyPath": "Items>AccoDetail>de>Zip"
         },
         {
-          "key": "Longitude",
-          "newKeyName": "newLongitude",
-          "path": "data>GpsPoints>position"
+          "keyPath": "Items>AccoDetail>de>test"
         }
       ]
     },
     {
       "name": "SecondAPI",
       "type": "OpenDataHubApiDatabase2",
-      "url": "https://tourism.opendatahub.com/v1/ODHActivityPoi?pagenumber=1&pagesize=1&type=255&removenullvalues=false",
+      "url": "https://tourism.opendatahub.com/v1/Event?pagenumber=1&removenullvalues=false",
       "mapping": [
         {
-          "key": "Latitude",
-          "newKeyName": "newLatitude",
-          "path": "GpsInfo"
+          "keyPath": "Items>ContactInfos>de>ZipCode"
         },
         {
-          "key": "Longitude",
-          "newKeyName": "newLongitude",
-          "path": "GpsInfo"
+          "keyPath": "Items>AccoDetail>de>Zip"
         }
       ]
+    }
+  ],
+  "replacementKeys":[
+    {
+      "value": "CAP"
+    },
+    {
+      "value": "test"
     }
   ]
 }
