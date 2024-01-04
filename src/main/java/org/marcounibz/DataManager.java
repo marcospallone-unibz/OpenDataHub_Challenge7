@@ -23,6 +23,8 @@ public class DataManager {
     List<String> replacementKeys = new ArrayList<>();
     List<Object> objectWhereDuplicates = new ArrayList<>();
     int indexWhereFoundReplacementKey;
+    String keyPath1;
+    String keyPath2;
 
     public DataManager() throws Exception {
         setConfiguration();
@@ -42,6 +44,9 @@ public class DataManager {
 
     public List<Object> checkDuplicates(String keyPath1, String keyPath2, int indexWhereFoundReplacementKey) {
         List<Object> returnList= new ArrayList<>();
+        this.objectWhereDuplicates.clear();
+        this.keyPath1=keyPath1;
+        this.keyPath2=keyPath2;
         this.indexWhereFoundReplacementKey = indexWhereFoundReplacementKey;
         returnList = getDuplicates(returnList, keyPath1, keyPath2);
         if(duplicatesFound){
@@ -112,15 +117,11 @@ public class DataManager {
 
     private List<Object> removeDuplicates(JSONObject merged, List<Object> duplicatesValues, Object duplicate) {
         List<Object> removeDuplicatesList = new ArrayList<>();
-        for(Mapping m1:this.firstConfig.mapping){
-            for(Mapping m2:this.secondConfig.mapping) {
-                String[] firstAPISteps = m1.getKeyPath().split(">");
-                String[] secondAPISteps = m2.getKeyPath().split(">");
+                String[] firstAPISteps = this.keyPath1.split(">");
+                String[] secondAPISteps = this.keyPath2.split(">");
                 goIntoJSONToRemoveDuplicates(firstAPISteps, merged, duplicate);
                 goIntoJSONToRemoveDuplicates(secondAPISteps, merged, duplicate);
                 removeDuplicatesList.add(addDuplicateValue(merged, duplicatesValues, duplicate));
-            }
-        }
         return removeDuplicatesList;
     }
 
