@@ -1,6 +1,6 @@
-package org.marcounibz.mapping;
+package org.marcounibz.configurationMapping;
 
-public class Mapping {
+public class keysWhereFindDuplicates {
     String keyPath;
 
     public String getKeyPath() {

@@ -5,33 +5,30 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.marcounibz.configurationHelper.ConfiguratorReader;
-import org.marcounibz.mapping.Mapping;
-import org.marcounibz.mapping.OpenDataHubApiConfig;
+import org.marcounibz.configurationMapping.OpenDataHubApiConfig;
 
 import java.io.IOException;
 import java.util.*;
 
 public class DataManager {
-    FirstAPI firstAPI;
-    SecondAPI secondAPI;
-    OpenDataHubApiConfig firstConfig;
-    OpenDataHubApiConfig secondConfig;
-    JSONObject firstAPIObject;
-    JSONObject secondAPIObject;
-    boolean duplicatesFound = false;
-    Map<String, Object> mergedMap = new HashMap<>();
-    List<String> replacementKeys = new ArrayList<>();
-    List<Object> objectWhereDuplicates = new ArrayList<>();
-    int indexWhereFoundReplacementKey;
-    String keyPath1;
-    String keyPath2;
+    private OpenDataHubApiConfig firstConfig;
+    private OpenDataHubApiConfig secondConfig;
+    private final JSONObject firstAPIObject;
+    private final JSONObject secondAPIObject;
+    private boolean duplicatesFound = false;
+    //private final Map<String, Object> mergedMap = new HashMap<>();
+    private List<String> replacementKeys = new ArrayList<>();
+    private List<Object> objectWhereDuplicates = new ArrayList<>();
+    private int indexWhereFoundReplacementKey;
+    private String keyPath1;
+    private String keyPath2;
 
     public DataManager() throws Exception {
         setConfiguration();
-        this.firstAPI = new FirstAPI(this.firstConfig);
-        this.secondAPI = new SecondAPI(this.secondConfig);
-        this.firstAPIObject = this.firstAPI.objectFromAPI;
-        this.secondAPIObject = this.secondAPI.objectFromAPI;
+        FirstAPI firstAPI = new FirstAPI(this.firstConfig);
+        SecondAPI secondAPI = new SecondAPI(this.secondConfig);
+        this.firstAPIObject = firstAPI.getObjectFromAPI();
+        this.secondAPIObject = secondAPI.getObjectFromAPI();
     }
 
     public void setConfiguration() throws IOException, ParseException {
@@ -43,15 +40,11 @@ public class DataManager {
     }
 
     public List<Object> checkDuplicates(String keyPath1, String keyPath2, int indexWhereFoundReplacementKey) {
-        List<Object> returnList= new ArrayList<>();
-        this.objectWhereDuplicates.clear();
-        this.keyPath1=keyPath1;
-        this.keyPath2=keyPath2;
-        this.indexWhereFoundReplacementKey = indexWhereFoundReplacementKey;
+        List<Object> returnList = initialSetting(keyPath1, keyPath2, indexWhereFoundReplacementKey);
         returnList = getDuplicates(returnList, keyPath1, keyPath2);
-        if(duplicatesFound){
+        if (duplicatesFound) {
             return returnList;
-        } else{
+        } else {
             List<Object> noDuplicatesFound = new ArrayList<>();
             JSONObject zeroDuplicatesJSONObj = new JSONObject();
             zeroDuplicatesJSONObj.put("NUMBER OF DUPLICATES FOUND", 0);
@@ -60,6 +53,15 @@ public class DataManager {
             noDuplicatesFound.add(this.secondAPIObject);
             return noDuplicatesFound;
         }
+    }
+
+    private List<Object> initialSetting(String keyPath1, String keyPath2, int indexWhereFoundReplacementKey) {
+        List<Object> returnList = new ArrayList<>();
+        this.objectWhereDuplicates.clear();
+        this.keyPath1 = keyPath1;
+        this.keyPath2 = keyPath2;
+        this.indexWhereFoundReplacementKey = indexWhereFoundReplacementKey;
+        return returnList;
     }
 
     private List<Object> getDuplicates(List<Object> returnList, String keyPath1, String keyPath2) {
@@ -96,7 +98,7 @@ public class DataManager {
 
     private List<Object> prepareListToReturn(List<Object> duplicatesValue) {
         List<Object> prepareValueToReturnList = new ArrayList<>();
-        for(Object duplicate:duplicatesValue){
+        for (Object duplicate : duplicatesValue) {
             JSONObject merged = new JSONObject();
             if (this.firstAPIObject != null) {
                 Set<String> firstAPIKeys = this.firstAPIObject.keySet();
@@ -117,11 +119,11 @@ public class DataManager {
 
     private List<Object> removeDuplicates(JSONObject merged, List<Object> duplicatesValues, Object duplicate) {
         List<Object> removeDuplicatesList = new ArrayList<>();
-                String[] firstAPISteps = this.keyPath1.split(">");
-                String[] secondAPISteps = this.keyPath2.split(">");
-                goIntoJSONToRemoveDuplicates(firstAPISteps, merged, duplicate);
-                goIntoJSONToRemoveDuplicates(secondAPISteps, merged, duplicate);
-                removeDuplicatesList.add(addDuplicateValue(merged, duplicatesValues, duplicate));
+        String[] firstAPISteps = this.keyPath1.split(">");
+        String[] secondAPISteps = this.keyPath2.split(">");
+        goIntoJSONToRemoveDuplicates(firstAPISteps, merged, duplicate);
+        goIntoJSONToRemoveDuplicates(secondAPISteps, merged, duplicate);
+        removeDuplicatesList.add(addDuplicateValue(merged, duplicatesValues, duplicate));
         return removeDuplicatesList;
     }
 
@@ -149,7 +151,7 @@ public class DataManager {
                 if (objInJsonArray instanceof JSONObject jsonObj) {
                     if (jsonObj.containsKey(nextStep)) {
                         moreValue.add(jsonObj.get(nextStep));
-                        this.mergedMap.put(nextStep, jsonObj.get(nextStep));
+                        //this.mergedMap.put(nextStep, jsonObj.get(nextStep));
                     }
                 } else {
                     goIntoAnnidate(objInJsonArray, moreValue, nextStep, returnValue);
@@ -158,7 +160,7 @@ public class DataManager {
             return moreValue;
         } else if (obj instanceof JSONObject JSONObject) {
             returnValue = JSONObject.get(nextStep);
-            this.mergedMap.put(nextStep, JSONObject.get(nextStep));
+            //this.mergedMap.put(nextStep, JSONObject.get(nextStep));
         }
         return returnValue;
     }

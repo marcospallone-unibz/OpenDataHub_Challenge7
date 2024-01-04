@@ -20,25 +20,25 @@ Steps:
 
 ```JSON
 {
-"apiClients": [
-  {
-    "name": "mobility",
-    "type": "OpenDataHubApiDatabase1",
-    "url": "https://api-database1.com",
-    "mapping": {
-      "key": "dataKey",
-      "path": "item>location"
+  "apiClients": [
+    {
+      "name": "mobility",
+      "type": "OpenDataHubApiDatabase1",
+      "url": "https://api-database1.com",
+      "keysWhereFindDuplicates": {
+        "key": "dataKey",
+        "path": "item>location"
+      }
+    },
+    {
+      "name": "tourism",
+      "type": "OpenDataHubApiDatabase2",
+      "url": "https://api-database2.com",
+      "keysWhereFindDuplicates": {
+        "key": "dataKey",
+        "path": "item2>location2"
+      }
     }
-  },
-  {
-    "name": "tourism",
-    "type": "OpenDataHubApiDatabase2",
-    "url": "https://api-database2.com",
-    "mapping": {
-      "key": "dataKey",
-      "path": "item2>location2"
-    }
-  }
-]
+  ]
 }
 ```

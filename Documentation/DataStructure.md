@@ -128,7 +128,7 @@ as follows:
       "name": "FirstAPI",
       "type": "OpenDataHubApiDatabase1",
       "url": "https://mobility.api.opendatahub.com/v2/flat%2Cnode/%2A?limit=200&offset=0&shownull=false&distinct=true",
-      "mapping": [
+      "keysWhereFindDuplicates": [
         {
           "key": "Latitude",
           "newKeyName": "newLatitude",
@@ -145,7 +145,7 @@ as follows:
       "name": "SecondAPI",
       "type": "OpenDataHubApiDatabase2",
       "url": "https://tourism.opendatahub.com/v1/ODHActivityPoi?pagenumber=1&pagesize=1&type=255&removenullvalues=false",
-      "mapping": [
+      "keysWhereFindDuplicates": [
         {
           "key": "Latitude",
           "newKeyName": "newLatitude",
