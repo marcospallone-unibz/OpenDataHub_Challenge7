@@ -7,9 +7,11 @@
       "mapping": [
         {
           "keyPath": "Items>AccoDetail>de>Zip"
+        },
+        {
+          "keyPath": "Items>AccoDetail>de>test"
         }
-      ],
-      "keyWhereCheckDuplicate": "data>pavailable"
+      ]
     },
     {
       "name": "SecondAPI",
@@ -18,10 +20,19 @@
       "mapping": [
         {
           "keyPath": "Items>ContactInfos>de>ZipCode"
+        },
+        {
+          "keyPath": "Items>AccoDetail>de>Zip"
         }
-      ],
-      "keyWhereCheckDuplicate": "Items>_Meta>Reduced"
+      ]
     }
   ],
-  "replacementKey": "TestKey"
+  "replacementKeys":[
+    {
+      "value": "CAP"
+    },
+    {
+      "value": "test"
+    }
+  ]
 }
