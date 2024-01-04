@@ -10,19 +10,25 @@ import org.marcounibz.mapping.OpenDataHubApiConfig;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConfiguratorReader {
     JSONParser parser = new JSONParser();
     Gson gson = new Gson();
     OpenDataHubApiConfig firstConfig;
     OpenDataHubApiConfig secondConfig;
-    String replacementKey;
+    List<String> replacementKeys = new ArrayList<>();
 
 
     public void readDataFromConfigurationFile() throws IOException, ParseException {
         JSONObject jsonObject = (JSONObject) parser.parse(new FileReader("src/main/resources/config.json"));
         JSONArray apiClients = (JSONArray) jsonObject.get("apiClients");
-        this.replacementKey = (String) jsonObject.get("replacementKey");
+        JSONArray replacementKeysValues = (JSONArray) jsonObject.get("replacementKeys");
+        for (Object replacementKeysValue : replacementKeysValues) {
+            JSONObject obj = (JSONObject) replacementKeysValue;
+            this.replacementKeys.add((String) obj.get("value"));
+        }
         JSONObject api1 = (JSONObject) apiClients.get(0);
         JSONObject api2 = (JSONObject) apiClients.get(1);
         this.firstConfig = gson.fromJson(api1.toString(), OpenDataHubApiConfig.class);
@@ -40,8 +46,8 @@ public class ConfiguratorReader {
         return copyOfTourismConfig;
     }
 
-    public String getReplacementKey() {
-        return this.replacementKey;
+    public List<String> getReplacementKeys() {
+        return this.replacementKeys;
     }
 
 }

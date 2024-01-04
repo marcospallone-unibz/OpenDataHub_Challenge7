@@ -7,6 +7,9 @@
       "mapping": [
         {
           "keyPath": "Items>AccoDetail>de>Zip"
+        },
+        {
+          "keyPath": "Items>AccoDetail>de>test"
         }
       ]
     },
@@ -17,9 +20,19 @@
       "mapping": [
         {
           "keyPath": "Items>ContactInfos>de>ZipCode"
+        },
+        {
+          "keyPath": "Items>AccoDetail>de>Zip"
         }
       ]
     }
   ],
-  "replacementKey": "CAP"
+  "replacementKeys":[
+    {
+      "value": "CAP"
+    },
+    {
+      "value": "test"
+    }
+  ]
 }

@@ -20,8 +20,9 @@ public class DataManager {
     JSONObject secondAPIObject;
     boolean duplicatesFound = false;
     Map<String, Object> mergedMap = new HashMap<>();
-    String replacementKey;
+    List<String> replacementKeys = new ArrayList<>();
     List<Object> objectWhereDuplicates = new ArrayList<>();
+    int indexWhereFoundReplacementKey;
 
     public DataManager() throws Exception {
         setConfiguration();
@@ -36,12 +37,13 @@ public class DataManager {
         configuratorReader.readDataFromConfigurationFile();
         this.firstConfig = configuratorReader.getFirstConfig();
         this.secondConfig = configuratorReader.getSecondConfig();
-        this.replacementKey = configuratorReader.getReplacementKey();
+        this.replacementKeys = configuratorReader.getReplacementKeys();
     }
 
-    public List<Object> checkDuplicates() {
+    public List<Object> checkDuplicates(String keyPath1, String keyPath2, int indexWhereFoundReplacementKey) {
         List<Object> returnList= new ArrayList<>();
-        returnList = getDuplicates(returnList);
+        this.indexWhereFoundReplacementKey = indexWhereFoundReplacementKey;
+        returnList = getDuplicates(returnList, keyPath1, keyPath2);
         if(duplicatesFound){
             return returnList;
         } else{
@@ -55,24 +57,20 @@ public class DataManager {
         }
     }
 
-    private List<Object> getDuplicates(List<Object> returnList) {
-        for(Mapping m1:this.firstConfig.mapping){
-            for(Mapping m2:this.secondConfig.mapping){
-                Object firstAPIValues = this.firstAPIObject;
-                Object secondAPIValues = this.secondAPIObject;
-                String[] firstAPISteps = m1.getKeyPath().split(">");
-                String[] secondAPISteps = m2.getKeyPath().split(">");
-                List<Object> duplicatesValue = new ArrayList<>();
-                for (String s : firstAPISteps) {
-                    firstAPIValues = goIntoJSON(firstAPIValues, s);
-                }
-                for (String s : secondAPISteps) {
-                    secondAPIValues = goIntoJSON(secondAPIValues, s);
-                }
-                getDuplicatesValues(firstAPIValues, secondAPIValues, duplicatesValue);
-                returnList = (prepareListToReturn(duplicatesValue));
-            }
+    private List<Object> getDuplicates(List<Object> returnList, String keyPath1, String keyPath2) {
+        Object firstAPIValues = this.firstAPIObject;
+        Object secondAPIValues = this.secondAPIObject;
+        String[] firstAPISteps = keyPath1.split(">");
+        String[] secondAPISteps = keyPath2.split(">");
+        List<Object> duplicatesValue = new ArrayList<>();
+        for (String s : firstAPISteps) {
+            firstAPIValues = goIntoJSON(firstAPIValues, s);
         }
+        for (String s : secondAPISteps) {
+            secondAPIValues = goIntoJSON(secondAPIValues, s);
+        }
+        getDuplicatesValues(firstAPIValues, secondAPIValues, duplicatesValue);
+        returnList = (prepareListToReturn(duplicatesValue));
         return returnList;
     }
 
@@ -129,7 +127,7 @@ public class DataManager {
     private JSONObject addDuplicateValue(JSONObject merged, List<Object> duplicatesValues, Object duplicate) {
         List<Object> objectWhereDuplicatesCopy = new ArrayList<>(this.objectWhereDuplicates);
         if (!duplicatesValues.isEmpty()) {
-            merged.put(this.replacementKey, duplicate);
+            merged.put(this.replacementKeys.get(indexWhereFoundReplacementKey), duplicate);
             merged.put("numberOfDuplicates", objectWhereDuplicates.size());
             merged.put("objsWhereDuplicatesFound", objectWhereDuplicatesCopy);
         }
