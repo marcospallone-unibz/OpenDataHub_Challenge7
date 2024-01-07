@@ -12,14 +12,14 @@ import java.util.List;
 
 public class Main {
 
-    static OpenDataHubApiConfig firstConfig;
-    static OpenDataHubApiConfig secondConfig;
+    static OpenDataHubApiConfig firstApiClientConfig;
+    static OpenDataHubApiConfig secondApiClientConfig;
 
     public static void setConfiguration() throws IOException, ParseException {
         ConfiguratorReader configuratorReader = new ConfiguratorReader();
         configuratorReader.readDataFromConfigurationFile();
-        firstConfig = configuratorReader.getFirstConfig();
-        secondConfig = configuratorReader.getSecondConfig();
+        firstApiClientConfig = configuratorReader.getFirstConfig();
+        secondApiClientConfig = configuratorReader.getSecondConfig();
     }
 
 
@@ -28,15 +28,15 @@ public class Main {
         setConfiguration();
         List<Object> returnList = new ArrayList<>();
         int iteratingOnKeys = 0;
-        for (keysWhereFindDuplicates m1 : firstConfig.keysWhereFindDuplicates) {
-            for (keysWhereFindDuplicates m2 : secondConfig.keysWhereFindDuplicates) {
-                Object objectToAdd = dataManager.checkDuplicates(m1.getKeyPath(), m2.getKeyPath(), iteratingOnKeys);
+        for (keysWhereFindDuplicates key1 : firstApiClientConfig.keysWhereFindDuplicates) {
+            for (keysWhereFindDuplicates key2 : secondApiClientConfig.keysWhereFindDuplicates) {
+                Object objectToAdd = dataManager.checkDuplicates(key1.getKeyPath(), key2.getKeyPath(), iteratingOnKeys);
                 if (objectToAdd instanceof ArrayList jsonArray) {
                     if (!jsonArray.isEmpty()) {
                         returnList.add(objectToAdd);
                     } else {
                         JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("NODUPLICATESFOUNDWITH", m1.getKeyPath() + " -- " + m2.getKeyPath());
+                        jsonObject.put("NODUPLICATESFOUNDWITH", key1.getKeyPath() + " -- " + key2.getKeyPath());
                         returnList.add(jsonObject);
                     }
                 }

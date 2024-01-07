@@ -27,9 +27,9 @@ public class FirstAPI implements OpenDataHubApiClient {
         connection.setRequestMethod("GET");
         InputStream inputStream = connection.getInputStream();
         JSONParser jsonParser = new JSONParser();
-        JSONObject jsonObject = (JSONObject) jsonParser.parse(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        JSONObject apiDataObject = (JSONObject) jsonParser.parse(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         connection.disconnect();
-        this.objectFromAPI = jsonObject;
+        this.objectFromAPI = apiDataObject;
     }
 
     public JSONObject getObjectFromAPI() {

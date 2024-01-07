@@ -26,8 +26,8 @@ public class ConfiguratorReader {
         JSONArray apiClients = (JSONArray) jsonObject.get("apiClients");
         JSONArray replacementKeysValues = (JSONArray) jsonObject.get("replacementKeys");
         for (Object replacementKeysValue : replacementKeysValues) {
-            JSONObject obj = (JSONObject) replacementKeysValue;
-            this.replacementKeys.add((String) obj.get("value"));
+            JSONObject replacementKeyObj = (JSONObject) replacementKeysValue;
+            this.replacementKeys.add((String) replacementKeyObj.get("value"));
         }
         JSONObject api1 = (JSONObject) apiClients.get(0);
         JSONObject api2 = (JSONObject) apiClients.get(1);
