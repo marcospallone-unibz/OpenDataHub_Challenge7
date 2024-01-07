@@ -1,10 +1,9 @@
 package org.marcounibz;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.marcounibz.configurationMapping.OpenDataHubApiConfig;
 import org.marcounibz.interfaces.OpenDataHubApiClient;
-import org.marcounibz.mapping.OpenDataHubApiConfig;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -13,9 +12,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public class SecondAPI implements OpenDataHubApiClient {
-    OpenDataHubApiConfig config;
-    JSONObject objectFromAPI;
-    JSONArray splittedArray;
+    private OpenDataHubApiConfig config;
+    private JSONObject objectFromAPI;
 
     public SecondAPI(OpenDataHubApiConfig config) throws Exception {
         this.config = config;
@@ -32,6 +30,10 @@ public class SecondAPI implements OpenDataHubApiClient {
         JSONObject jsonObject = (JSONObject) jsonParser.parse(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         connection.disconnect();
         this.objectFromAPI = jsonObject;
+    }
+
+    public JSONObject getObjectFromAPI() {
+        return objectFromAPI;
     }
 }
 
