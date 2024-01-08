@@ -16,7 +16,6 @@ public class DataManager {
     private final JSONObject firstAPIObject;
     private final JSONObject secondAPIObject;
     private boolean duplicatesFound = false;
-    //private final Map<String, Object> mergedMap = new HashMap<>();
     private List<String> replacementKeys = new ArrayList<>();
     private List<Object> objectWhereDuplicates = new ArrayList<>();
     private int indexWhereFoundReplacementKey;
@@ -102,16 +101,21 @@ public class DataManager {
             JSONObject mergedObject = new JSONObject();
             if (this.firstAPIObject != null) {
                 Set<String> firstAPIKeys = this.firstAPIObject.keySet();
+                JSONObject object1 = new JSONObject();
                 firstAPIKeys.forEach((currentKey) -> {
-                    mergedObject.put(currentKey, this.firstAPIObject.get(currentKey));
+                    object1.put(currentKey, this.firstAPIObject.get(currentKey));
                 });
+                mergedObject.put("API1", object1);
             }
             if (this.secondAPIObject != null) {
                 Set<String> secondAPIKeys = this.secondAPIObject.keySet();
+                JSONObject object2 = new JSONObject();
                 secondAPIKeys.forEach((currentKey) -> {
-                    mergedObject.put(currentKey, this.secondAPIObject.get(currentKey));
+                    object2.put(currentKey, this.secondAPIObject.get(currentKey));
                 });
+                mergedObject.put("API2", object2);
             }
+
             prepareValueToReturnList.add(removeDuplicates(mergedObject, duplicatesValue, duplicate));
         }
         return prepareValueToReturnList;
@@ -119,8 +123,10 @@ public class DataManager {
 
     private List<Object> removeDuplicates(JSONObject merged, List<Object> duplicatesValues, Object duplicate) {
         List<Object> removeDuplicatesList = new ArrayList<>();
-        String[] firstAPISteps = this.keyPath1.split(">");
-        String[] secondAPISteps = this.keyPath2.split(">");
+        List<String> firstAPISteps = new ArrayList<>(List.of(this.keyPath1.split(">")));;
+        firstAPISteps.add(0, "API1");
+        List<String> secondAPISteps = new ArrayList<>(List.of(this.keyPath2.split(">")));
+        secondAPISteps.add(0, "API2");
         goIntoJSONToRemoveDuplicates(firstAPISteps, merged, duplicate);
         goIntoJSONToRemoveDuplicates(secondAPISteps, merged, duplicate);
         removeDuplicatesList.add(addDuplicateValue(merged, duplicatesValues, duplicate));
@@ -151,7 +157,6 @@ public class DataManager {
                 if (objInJsonArray instanceof JSONObject jsonObj) {
                     if (jsonObj.containsKey(nextStep)) {
                         moreValue.add(jsonObj.get(nextStep));
-                        //this.mergedMap.put(nextStep, jsonObj.get(nextStep));
                     }
                 } else {
                     goIntoAnnidate(objInJsonArray, moreValue, nextStep, returnValue);
@@ -160,34 +165,33 @@ public class DataManager {
             return moreValue;
         } else if (obj instanceof JSONObject JSONObject) {
             returnValue = JSONObject.get(nextStep);
-            //this.mergedMap.put(nextStep, JSONObject.get(nextStep));
         }
         return returnValue;
     }
 
-    public void goIntoJSONToRemoveDuplicates(String[] steps, Object mergedCopy, Object duplicate) {
-        for (int index = 0; index < steps.length; index++) {
-            if (index != steps.length - 1) {
+    public void goIntoJSONToRemoveDuplicates(List<String> steps, Object mergedCopy, Object duplicate) {
+        for (int index = 0; index < steps.size(); index++) {
+            if (index != steps.size() - 1) {
                 if (mergedCopy instanceof JSONObject jsonObject) {
-                    mergedCopy = jsonObject.get(steps[index]);
+                    mergedCopy = jsonObject.get(steps.get(index));
                 } else if (mergedCopy instanceof JSONArray jsonArray) {
                     for (Object obj : jsonArray) {
                         if (obj instanceof JSONObject jsonObject) {
-                            goIntoJSONToRemoveDuplicates(Arrays.stream(steps, index, steps.length).toArray(String[]::new), jsonObject, duplicate);
+                            goIntoJSONToRemoveDuplicates(steps.subList(index, steps.size()), jsonObject, duplicate);
                         }
                     }
                 }
             } else {
                 if (mergedCopy instanceof JSONObject jsonObject) {
-                    if (duplicate.equals(jsonObject.get(steps[index]))) {
-                        jsonObject.remove(steps[index]);
+                    if (duplicate.equals(jsonObject.get(steps.get(index)))) {
+                        jsonObject.remove(steps.get(index));
                         this.objectWhereDuplicates.add(jsonObject);
                     }
                 } else if (mergedCopy instanceof JSONArray jsonArray) {
                     for (Object obj : jsonArray) {
                         if (obj instanceof JSONObject jsonObject) {
-                            if (duplicate.equals(jsonObject.get(steps[index]))) {
-                                jsonObject.remove(steps[index]);
+                            if (duplicate.equals(jsonObject.get(steps.get(index)))) {
+                                jsonObject.remove(steps.get(index));
                                 this.objectWhereDuplicates.add(jsonObject);
                             }
                         }

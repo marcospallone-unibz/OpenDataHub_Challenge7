@@ -3,10 +3,10 @@
     {
       "name": "FirstAPI",
       "type": "OpenDataHubApiDatabase1",
-      "url": "https://mobility.api.opendatahub.com/v2/flat%2Cevent/%2A/latest?limit=200&offset=0&shownull=false&distinct=true",
+      "url": "https://tourism.opendatahub.com/v1/Event?pagenumber=1&removenullvalues=false",
       "keysWhereFindDuplicates": [
         {
-          "keyPath": "data>evmetadata>messageZoneDescDe"
+          "keyPath": "Items>ContactInfos>de>ZipCode"
         }
       ]
     },
@@ -16,7 +16,7 @@
       "url": "https://tourism.opendatahub.com/v1/Event?pagenumber=1&removenullvalues=false",
       "keysWhereFindDuplicates": [
         {
-          "keyPath": "Items>ContactInfos>de>City"
+          "keyPath": "Items>ContactInfos>de>ZipCode"
         }
       ]
     }
